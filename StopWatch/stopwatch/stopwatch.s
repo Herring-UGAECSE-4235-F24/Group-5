@@ -10,19 +10,36 @@
 
 main:
 
-	mov	r2, #108		@ load 15 into r2 (outer loop count)
-	mov	r9, #0			@ Minutes
-	mov	r8, #0			@ Seconds
-	mov	r7, #0			@ Hundreths of Seconds
+	mov	r1, #108		@ (seconds loop count)
 
-l1:	ldr	r1, =1000000	@  (second loop count) 
-l2:	ldr	r3, =1000000	@  (Hundreths loop count) 
-l3: 	
-	subs    r1, r1, #1              @ r1 = r1 – 1, decrement r1 (inner loop) 
+l1:
+	ldr	r2, =1000000	@  (hundreds loop count) 
+l2:	
+	ldr	r3, =1000000	@  (mili loop count) 
+l3:
+	
+	subs	r3, r3, #1
+	bne l3
+	subs    r2, r2, #1              @ r2 = r2 – 1, decrement r2 (i) 
 	bne	l2			@ repeat it until r1 = 0 
-	subs	r2, r2, #1		@ r2 = r2 – 1, decrement r2 (outer loop) 
+	subs	r1, r1, #1		@ r2 = r2 – 1, decrement r2 (outer loop) 
 	bne	l1			@ repeat it until r2 = 0 
 
 	@ terminate the program
 	mov   	r7, #1
 	svc   0
+
+ASCII:   //regs are wrong currently just skelton code for printing asci
+	mov r8, r3 MOD 10 //Remaindar after dividing by 10
+	mov r3, r3/10
+	mov r6, r8 + 48
+	push r8 
+	cmp R3, ZERO
+	bne ASCII 
+Print:
+	pop
+	printf
+	bne 
+
+
+
