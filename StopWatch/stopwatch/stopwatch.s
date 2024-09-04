@@ -45,7 +45,7 @@ _PrintloopH:
         LDR R2, =hundredths
         STR R1, [R2]            @ write back
 		cmp R2, #100
-		LDREQ 0, [hundredths]
+		LDREQ ZERO, [hundredths]
         BEQ _PrintloopS
         Bx LR
 _PrintloopS:
@@ -60,7 +60,7 @@ _PrintloopS:
         LDR R2, =seconds
         STR R1, [R2]            @ write back
 		cmp R2, #60
-		LDREQ 0, [seconds]
+		LDREQ ZERO, [seconds]
         BEQ _PrintloopM
         Bx LR
 _PrintloopM:
@@ -75,13 +75,13 @@ _PrintloopM:
         LDR R2, =minutes
         STR R1, [R2]            @ write back
 		cmp R2, #2
-		LDREQ 0, [minutes]
+		LDREQ ZERO, [minutes]
         BEQ _reset
         Bx LR
 _reset:
-	STR 0, [hundredths]
-	STR 0, [seconds]
-	STR 0, [minutes]
+	STR ZERO, [hundredths]
+	STR ZERO, [seconds]
+	STR ZERO, [minutes]
 _exit:
 	@ terminate the program
 	mov   	r7, #1
