@@ -10,7 +10,7 @@
 
 main:
 	
-	ldr r1, =108 (minutes)
+	ldr r1, =108 //(minutes)
 
 
 l1:
