@@ -4,13 +4,23 @@
 @output should be as described.
 @You should look at the printloop.s example for the use of the printf command.  You will probably need to investigate formating using the asciz data type.
 @Deliverable 2: your code on github and in your writeup.  We will check in class and look at accuracy as well.
-
+	.data
+	string: .asciz "%d\n"
+	
 	.text
 	.global main
+	.extern printf
+
 
 main:
+	
 
+	LDR R0, =string
+	LDR R1, =0xFFFF /*Output number*/
+	BL printf
+	B exit
 	mov	r1, #108		@ (seconds loop count)
+ 
 
 l1:
 	ldr	r2, =1000000	@  (hundreds loop count) 
@@ -19,6 +29,7 @@ l2:
 l3:
 	
 	subs	r3, r3, #1
+	bl ASCII
 	bne l3
 	subs    r2, r2, #1              @ r2 = r2 – 1, decrement r2 (i) 
 	bne	l2			@ repeat it until r1 = 0 
@@ -30,16 +41,21 @@ l3:
 	svc   0
 
 ASCII:   //regs are wrong currently just skelton code for printing asci
-	mov r8, r3 MOD 10 //Remaindar after dividing by 10
-	mov r3, r3/10
+	mov r8, r1 MOD 10 //Remaindar after dividing by 10
+	mov r1, r1/10
 	mov r6, r8 + 48
-	push r8 
+	push {r8} 
 	cmp R3, ZERO
 	bne ASCII 
-Print:
-	pop
-	printf
-	bne 
+	
+print:
+	pop {r8}
+	printf(r8)
+	bne print
+	bx lr
+exit:
+	MOV R7, #1
+	SWI 0
 
 
 
