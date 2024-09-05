@@ -75,9 +75,10 @@ _incrementMin:
 _colon:
 	mov     R0, #1          @ 1 = StdOut
    	ldr     R1, =colon 		@sting to print
-    	mov     R2, #1         @length of out string
+    mov     R2, #1         @length of out string
    	mov     R7, #4          @linux write system call
-    	svc     0               @call linux to print
+    svc     0               @call linux to print
+	bx 		lr
 
 
 _exit:
