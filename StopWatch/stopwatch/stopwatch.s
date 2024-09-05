@@ -22,7 +22,7 @@ main:
 	
 	
 _reload:
-	ldr r3, =9040000 @whatever time is a hunredth of a sec based on delay loop 
+	ldr r3, =9050000 @whatever time is a hunredth of a sec based on delay loop 
 	add r7, r7, #1 @increments every hundreth of a second
 	str r7, [r4] @strs back to hundreths .data
 	cmp r7, #100
@@ -57,7 +57,7 @@ _printloop:
 
 
 		cmp R9, #2
-		beq _exit @if 2:00:00 is printed reset to 0:0:0
+		beq main @if 2:00:00 is printed reset to 0:0:0
 
    	B _reload @else countnue incrementing hundreths
 
