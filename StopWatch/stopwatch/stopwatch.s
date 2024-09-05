@@ -5,26 +5,26 @@
 @You should look at the printloop.s example for the use of the printf command.  You will probably need to investigate formating using the asciz data type.
 @Deliverable 2: your code on github and in your writeup.  We will check in class and look at accuracy as well.
 	.global main
-    	.func main
+    .func main
 
 
 main:
-	ldr r10 , =hundredths 
-	ldr r11 , =seconds
-	ldr r12 , =minutes
+	ldr r4 , =hundredths 
+	ldr r5 , =seconds
+	ldr r6 , =minutes
 	mov r7, #0 @hundredth of a second count when hits 12,000 reset to 0 (aka hit 2 mins)
 	mov r8, #0 @seconds
 	mov r9, #0 @minutes
-	str r7 , [r10] @using zero reg to reset
-	str r8 , [r11]
-	str r9 , [r12]
+	str r7, [r4] @using zero reg to reset
+	str r8, [r5]
+	str r9, [r6]
 
 	
 	
 _reload:
 	ldr r3, =1000000000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
 	add r7, r7, #1 @increments every hundreth of a second
-	str r7, [r10] @strs back to hundreths .data
+	str r7, [r4] @strs back to hundreths .data
 	cmp r7, #100
 	BEQ _incrementSec
 	
@@ -66,17 +66,17 @@ _printloop:
 
 _incrementSec:
 	mov R7, #0
-	str R7, [R10] 		@hundreths is reset to 0 in mem
+	str R7, [R4] 		@hundreths is reset to 0 in mem
 	add R8, R8, #1
-	str R8, [R11]		@seconds is incremented in mem
+	str R8, [R5]		@seconds is incremented in mem
 	cmp R8, #60			@if 60 secs increment min
 	beq _incrementMin
 	bne _printloop
 _incrementMin:
 	mov R8,	#0 			@resets seconds to zero in mem
-	str R8, [R11]
+	str R8, [R5]
 	add R9, R9, #1
-	str R9, [R12] 		@increments min in mem		
+	str R9, [R6] 		@increments min in mem		
 	b _printloop
 	
 
@@ -93,7 +93,7 @@ string:
 laststring:
 		.asciz "%d\n"
 hundredths:
-	        .word   0               @ hundreths count storage for printing
+	    .word   0               @ hundreths count storage for printing
 seconds:
 		.word 	0 				@ seconds count storage for print
 minutes:
