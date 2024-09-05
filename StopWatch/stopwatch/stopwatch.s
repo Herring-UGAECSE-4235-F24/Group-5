@@ -9,25 +9,29 @@
 
 
 main:
+	Ldr r10 , =hundredths 
+	ldr r11 , =seconds
+	ldr r12 , =minutes
+	str XZR , [r10] @using zero reg to reset
+	str XZR , [r11]
+	str XZR , [r12]
 	mov r7, #0 @hundredth of a second count when hits 12,000 reset to 0 (aka hit 2 mins)
 	mov r8, #0 @seconds
 	mov r9, #0 @minutes
-	str XZR , =hundredths @using zero reg to reset
-	str XZR , =seconds
-	str XZR , =minutes
+	
 	
 _reload:
 	ldr r3, #100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
 	add r4, r4, #1 @increments every hundreth of a second
-	str r4, =hundredths
-	cmp r4, 100
+	str r4, [r10] @strs back to hundreths .data
+	cmp r4, #100
 	BEQ _incrementSec
 _delayloop:
 	subs r3, r3, #1
 _printloop:
 	@Prints mins
     LDR R0, =string         @ seed printf
-    LDR R1, =minutes
+    LDR R1, =minutes 		@ loads mins into R1 for print
     LDR R1, [R1]            @ seed printf
     BL printf
 	@prints colon
@@ -51,17 +55,17 @@ _printloop:
 
 _incrementSec:
 	mov R7, #0
-	str R7, =hundredths
+	str R7, [R10] 		@hundreths is reset to 0 in mem
 	add R8, R8, #1
-	str R8, =seconds
-	cmp R8, #60
+	str R8, [R11]		@seconds is incremented in mem
+	cmp R8, #60			@if 60 secs increment min
 	beq _incrementMin
 	bne _printloop
 _incrementMin:
 	add R9, R9, #1
-	str R9, =minutes
-	mov R8,	#0 @resets seconds to zero
-	str R8, =seconds
+	str R9, [R12] 		@increments min in mem
+	mov R8,	#0 			@resets seconds to zero in mem
+	str R8, [R11]		
 	b _printloop
 	
 _colon:
