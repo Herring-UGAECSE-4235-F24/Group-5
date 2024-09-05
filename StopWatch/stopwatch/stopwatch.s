@@ -34,6 +34,9 @@ _delayloop:
 	
 _printloop:
 	@Prints mins
+		NOP
+		NOP
+		NOP
     	LDR R0, =string         @ seed printf
     	LDR R1, =minutes 		@ loads mins into R1 for print
     	LDR R1, [R1]            @ seed printf
@@ -54,6 +57,8 @@ _printloop:
     	LDR R1, =hundredths
     	LDR R1, [R1]            @ seed printf
     	BL printf
+
+
 		cmp R9, #2
 		beq _exit @if 2:00:00 is printed reset to 0:0:0
 
