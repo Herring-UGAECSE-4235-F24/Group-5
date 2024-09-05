@@ -9,90 +9,84 @@
 
 
 main:
+	mov r7, #0 @hundredth of a second count when hits 12,000 reset to 0 (aka hit 2 mins)
+	mov r8, #0 @seconds
+	mov r9, #0 @minutes
+	str #0, [hundredths]
+	str #0, [seconds]
+	str #0, [minutes]
 	
-	ldr r1, =108 //(minutes)
+_reload:
+	ldr r3, #100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
+	add r4, r4, #1 @increments every hundreth of a second
+	str r4, [hundredths]
+	cmp r4, 100
+	BEQ _incrementSec
+_delayloop:
+	subs r3, r3, #1
+_printloop:
+	@Prints mins
+    LDR R0, =string         @ seed printf
+    LDR R1, =minutes
+    LDR R1, [R1]            @ seed printf
+    BL printf
+	@prints colon
+	BL colon
+	@prints seconds
+	LDR R0, =string         @ seed printf
+    LDR R1, =seconds
+    LDR R1, [R1]            @ seed printf
+    BL printf
+	@prints colon
+	BL colon
+	@prints hundreths and new line
+	LDR R0, =laststringstring         @ seed printf
+    LDR R1, =hundredths
+    LDR R1, [R1]            @ seed printf
+    BL printf
+	cmp R9, #2
+	beq main @if 2:00:00 is printed reset to 0:0:0
 
+    B _reload @else countnue incrementing hundreths
 
-l1:
-	ldr	r2, =1000000	@  (seconds loop count) 
-l2:	
-	ldr	r3, =1000000	@  (hundreds loop count) 
-l3:
+_incrementSec:
+	mov R7, #0
+	str R7, [hundredths]
+	add R8, R8, #1
+	str R8, [seconds]
+	cmp R8, #60
+	beq _incrementMin
+	bne _printloop
+_incrementMin:
+	add R9, R9, #1
+	str R9, [minutes]
+	mov R8,	#0 @resets seconds to zero
+	str R8, [seconds]
+	b _printloop
 	
-	subs	r3, r3, #1
-	cmp 	r3 MOD #10000, 0
-	bleq _PrintloopH
-	bne l3
-	subs    r2, r2, #1              @ r2 = r2 – 1, decrement r2 (i) 
-	cmp 	r2 MOD #16666, 0
-	bleq _PrintloopS
-	bne	l2			@ repeat it until r1 = 0 
-	subs	r1, r1, #1		@ r2 = r2 – 1, decrement r2 (outer loop) 
-	cmp 	r2 MOD #54, 0
-	bleq _PrintloopM
-	bne	l1			@ repeat it until r2 = 0 
+_colon:
+	mov     R0, #1          @ 1 = StdOut
+    ldr     R1, =colon 		@sting to print
+    mov     R2, #1         @length of out string
+    mov     R7, #4          @linux write system call
+    svc     0               @call linux to print
 
 
-_PrintloopH:
-        LDR R0, =string         @ seed printf
-        LDR R1, =hundredths
-        LDR R1, [R1]            @ seed printf
-        BL printf
-
-        LDR R1, =hundredths
-        LDR R1, [R1]
-        ADDS R1, #0x1
-        LDR R2, =hundredths
-        STR R1, [R2]            @ write back
-		cmp R2, #100
-        BEQ _PrintloopS
-        Bx LR
-_PrintloopS:
-        LDR R0, =string         @ seed printf
-        LDR R1, =seconds
-        LDR R1, [R1]            @ seed printf
-        BL printf
-
-        LDR R1, =seconds
-        LDR R1, [R1]
-        ADDS R1, #0x1
-        LDR R2, =seconds
-        STR R1, [R2]            @ write back
-		cmp R2, #60
-        BEQ _PrintloopM
-        Bx LR
-_PrintloopM:
-        LDR R0, =string         @ seed printf
-        LDR R1, =minutes
-        LDR R1, [R1]            @ seed printf
-        BL printf
-
-        LDR R1, =minutes
-        LDR R1, [R1]
-        ADDS R1, #0x1
-        LDR R2, =minutes
-        STR R1, [R2]            @ write back
-		cmp R2, #2
-        BEQ _reset
-        Bx LR
-_reset:
-	STR ZERO, [hundredths]
-	STR ZERO, [seconds]
-	STR ZERO, [minutes]
 _exit:
-	@ terminate the program
-	mov   	r7, #1
-	svc   0
+	mov     R0, #0          @use 0 return code
+	mov     R7, #1          @service command code 1 
+    svc     0               @call linux to terminate
 
 .data
+colon:
+		.asciz ":"
 string:
-	 .asciz "%d\n"
+        .asciz "%d"
+laststring:
+		.asciz "%d\n"
 hundredths:
-        .word 0
+        .word   0               @ hundreths count storage for printing
 seconds:
-		.word 0
-minutes: 
-		.word 0
-
-
-
+		.word 	0 				@ seconds count storage for print
+minutes:
+		.word	0				@ minutes count for print
