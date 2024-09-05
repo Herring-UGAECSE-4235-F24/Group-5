@@ -39,20 +39,16 @@ _printloop:
     	LDR R1, [R1]            @ seed printf
     	BL printf
 		@prints colon
-		NOP
-		NOP
-		BL _colon
+		LDR R0, =colon
+		BL printf
 		@prints seconds
-		NOP
-		NOP
 		LDR R0, =string         @ seed printf
     	LDR R1, =seconds
     	LDR R1, [R1]            @ seed printf
     	BL printf
 		@prints colon
-		NOP
-		NOP
-		BL _colon
+		LDR R0, =colon
+		BL printf
 		@prints hundreths and new line
 		LDR R0, =laststring         @ seed printf
     	LDR R1, =hundredths
@@ -78,14 +74,6 @@ _incrementMin:
 	str R8, [R11]		
 	b _printloop
 	
-_colon:
-	mov     R0, #1          @ 1 = StdOut
-   	ldr     R1, =colon 		@sting to print
-    mov     R2, #1         @length of out string
-   	mov     R7, #4          @linux write system call
-    svc     0               @call linux to print
-	bx 		lr
-
 
 _exit:
 	mov     R0, #0          @use 0 return code
