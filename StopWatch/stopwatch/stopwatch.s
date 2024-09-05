@@ -22,7 +22,7 @@ main:
 	
 	
 _reload:
-	ldr r3, #100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
+	mov r3, #100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
 	add r4, r4, #1 @increments every hundreth of a second
 	str r4, [r10] @strs back to hundreths .data
 	cmp r4, #100
@@ -95,4 +95,3 @@ seconds:
 		.word 	0 				@ seconds count storage for print
 minutes:
 		.word	0				@ minutes count for print
-		
