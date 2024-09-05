@@ -22,7 +22,7 @@ main:
 	
 	
 _reload:
-	ldr r3, =1000000000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
+	ldr r3, =10000000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
 	add r7, r7, #1 @increments every hundreth of a second
 	str r7, [r10] @strs back to hundreths .data
 	cmp r7, #100
@@ -31,31 +31,37 @@ _reload:
 _delayloop:
 	subs r3, r3, #1
 	bne  _delayloop
-	beq  _printloop
+	
 _printloop:
 	@Prints mins
     	LDR R0, =string         @ seed printf
     	LDR R1, =minutes 		@ loads mins into R1 for print
     	LDR R1, [R1]            @ seed printf
     	BL printf
-	@prints colon
-	BL _colon
-	@prints seconds
-	LDR R0, =string         @ seed printf
+		@prints colon
+		NOP
+		NOP
+		BL _colon
+		@prints seconds
+		NOP
+		NOP
+		LDR R0, =string         @ seed printf
     	LDR R1, =seconds
     	LDR R1, [R1]            @ seed printf
     	BL printf
-	@prints colon
-	BL _colon
-	@prints hundreths and new line
-	LDR R0, =laststring         @ seed printf
+		@prints colon
+		NOP
+		NOP
+		BL _colon
+		@prints hundreths and new line
+		LDR R0, =laststring         @ seed printf
     	LDR R1, =hundredths
     	LDR R1, [R1]            @ seed printf
     	BL printf
-	cmp R9, #2
-	beq _exit @if 2:00:00 is printed reset to 0:0:0
+		cmp R9, #2
+		beq _exit @if 2:00:00 is printed reset to 0:0:0
 
-    B _reload @else countnue incrementing hundreths
+   	B _reload @else countnue incrementing hundreths
 
 _incrementSec:
 	mov R7, #0
