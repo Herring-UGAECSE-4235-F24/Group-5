@@ -22,7 +22,7 @@ main:
 	
 	
 _reload:
-	ldr r3, =10000000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
+	ldr r3, =100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
 	add r7, r7, #1 @increments every hundreth of a second
 	str r7, [r10] @strs back to hundreths .data
 	cmp r7, #100
@@ -73,10 +73,10 @@ _incrementSec:
 	beq _incrementMin
 	bne _printloop
 _incrementMin:
-	add R9, R9, #1
-	str R9, [R12] 		@increments min in mem
 	mov R8,	#0 			@resets seconds to zero in mem
-	str R8, [R11]		
+	str R8, [R11]
+	add R9, R9, #1
+	str R9, [R12] 		@increments min in mem		
 	b _printloop
 	
 
@@ -89,7 +89,7 @@ _exit:
 colon:
 		.asciz ":"
 string:
-       		.asciz "%d"
+       	.asciz "%d"
 laststring:
 		.asciz "%d\n"
 hundredths:
