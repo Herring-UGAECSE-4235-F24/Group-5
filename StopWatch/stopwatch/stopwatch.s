@@ -12,14 +12,14 @@ main:
 	mov r7, #0 @hundredth of a second count when hits 12,000 reset to 0 (aka hit 2 mins)
 	mov r8, #0 @seconds
 	mov r9, #0 @minutes
-	str #0, [hundredths]
-	str #0, [seconds]
-	str #0, [minutes]
+	str XZR , =hundredths @using zero reg to reset
+	str XZR , =seconds
+	str XZR , =minutes
 	
 _reload:
 	ldr r3, #100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
 	add r4, r4, #1 @increments every hundreth of a second
-	str r4, [hundredths]
+	str r4, =hundredths
 	cmp r4, 100
 	BEQ _incrementSec
 _delayloop:
@@ -51,17 +51,17 @@ _printloop:
 
 _incrementSec:
 	mov R7, #0
-	str R7, [hundredths]
+	str R7, =hundredths
 	add R8, R8, #1
-	str R8, [seconds]
+	str R8, =seconds
 	cmp R8, #60
 	beq _incrementMin
 	bne _printloop
 _incrementMin:
 	add R9, R9, #1
-	str R9, [minutes]
+	str R9, =minutes
 	mov R8,	#0 @resets seconds to zero
-	str R8, [seconds]
+	str R8, =seconds
 	b _printloop
 	
 _colon:
