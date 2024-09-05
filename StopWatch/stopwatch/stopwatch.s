@@ -22,7 +22,7 @@ main:
 	
 	
 _reload:
-	ldr r3, =8999000 @whatever time is a hunredth of a sec based on delay loop 
+	ldr r3, =8999990 @whatever time is a hunredth of a sec based on delay loop 
 	add r7, r7, #1 @increments every hundreth of a second
 	str r7, [r4] @strs back to hundreths .data
 	cmp r7, #100
