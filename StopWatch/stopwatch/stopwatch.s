@@ -22,7 +22,7 @@ main:
 	
 	
 _reload:
-	ldr r3, =100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
+	ldr r3, =1000000000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
 	add r7, r7, #1 @increments every hundreth of a second
 	str r7, [r10] @strs back to hundreths .data
 	cmp r7, #100
