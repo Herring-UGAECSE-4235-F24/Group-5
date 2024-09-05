@@ -22,7 +22,7 @@ main:
 	
 	
 _reload:
-	ldr r3, =10000000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
+	ldr r3, =8750000 @whatever time is a hunredth of a sec based on delay loop 
 	add r7, r7, #1 @increments every hundreth of a second
 	str r7, [r4] @strs back to hundreths .data
 	cmp r7, #100
@@ -34,9 +34,6 @@ _delayloop:
 	
 _printloop:
 	@Prints mins
-		NOP
-		NOP
-		NOP
     	LDR R0, =string         @ seed printf
     	LDR R1, =minutes 		@ loads mins into R1 for print
     	LDR R1, [R1]            @ seed printf
