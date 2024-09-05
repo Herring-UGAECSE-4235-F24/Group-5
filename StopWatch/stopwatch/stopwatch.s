@@ -39,14 +39,14 @@ _printloop:
     	LDR R1, [R1]            @ seed printf
     	BL printf
 	@prints colon
-	BL colon
+	BL _colon
 	@prints seconds
 	LDR R0, =string         @ seed printf
     	LDR R1, =seconds
     	LDR R1, [R1]            @ seed printf
     	BL printf
 	@prints colon
-	BL colon
+	BL _colon
 	@prints hundreths and new line
 	LDR R0, =laststring         @ seed printf
     	LDR R1, =hundredths
@@ -55,7 +55,7 @@ _printloop:
 	cmp R9, #2
 	beq _exit @if 2:00:00 is printed reset to 0:0:0
 
-    	B _reload @else countnue incrementing hundreths
+    B _reload @else countnue incrementing hundreths
 
 _incrementSec:
 	mov R7, #0
