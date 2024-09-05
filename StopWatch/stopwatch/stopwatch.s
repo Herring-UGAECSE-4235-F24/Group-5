@@ -12,12 +12,13 @@ main:
 	Ldr r10 , =hundredths 
 	ldr r11 , =seconds
 	ldr r12 , =minutes
-	str XZR , [r10] @using zero reg to reset
-	str XZR , [r11]
-	str XZR , [r12]
 	mov r7, #0 @hundredth of a second count when hits 12,000 reset to 0 (aka hit 2 mins)
 	mov r8, #0 @seconds
 	mov r9, #0 @minutes
+	str r7 , [r10] @using zero reg to reset
+	str r8 , [r11]
+	str r9 , [r12]
+
 	
 	
 _reload:
@@ -94,3 +95,4 @@ seconds:
 		.word 	0 				@ seconds count storage for print
 minutes:
 		.word	0				@ minutes count for print
+		
