@@ -1,14 +1,18 @@
-OBJS = stopwatch.o
-ifdef DEBUG
-DEBUGFLGS = -g
-else
-DEBUGFLGS =
-endif
+CC = gcc
+CFLAGS = -Wall -o2
 
-%.o : %.s
-	as $(DEBUGFLGS) $< -o $@
-GPIO_OFF: $(OBJS)
-	gcc -o Stopwatch $(OBJS)
+SRCS = blinkBcm2835.c
+OBJS = $(SRCS: .c = .o)
 
+TARGET = blinkBcm2835
+
+all: $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+	
+%.o: %.c
+	$(CC) $(CFLAGS) -c $<
+	
 clean:
-	rm *.o Stopwatch
+	rm -f $(TARGET) $(OBJS)
