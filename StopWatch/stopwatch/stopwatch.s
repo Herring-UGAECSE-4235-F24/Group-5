@@ -5,11 +5,11 @@
 @You should look at the printloop.s example for the use of the printf command.  You will probably need to investigate formating using the asciz data type.
 @Deliverable 2: your code on github and in your writeup.  We will check in class and look at accuracy as well.
 	.global main
-    .func main
+    	.func main
 
 
 main:
-	Ldr r10 , =hundredths 
+	ldr r10 , =hundredths 
 	ldr r11 , =seconds
 	ldr r12 , =minutes
 	mov r7, #0 @hundredth of a second count when hits 12,000 reset to 0 (aka hit 2 mins)
@@ -22,37 +22,40 @@ main:
 	
 	
 _reload:
-	ldr r3, =100000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
-	add r4, r4, #1 @increments every hundreth of a second
-	str r4, [r10] @strs back to hundreths .data
-	cmp r4, #100
+	ldr r3, =1000000000 @whatever time is a hunredth of a sec based on #of instructions since 1 inst per clock
+	add r7, r7, #1 @increments every hundreth of a second
+	str r7, [r10] @strs back to hundreths .data
+	cmp r7, #100
 	BEQ _incrementSec
+	
 _delayloop:
 	subs r3, r3, #1
+	bne  _delayloop
+	beq  _printloop
 _printloop:
 	@Prints mins
-    LDR R0, =string         @ seed printf
-    LDR R1, =minutes 		@ loads mins into R1 for print
-    LDR R1, [R1]            @ seed printf
-    BL printf
+    	LDR R0, =string         @ seed printf
+    	LDR R1, =minutes 		@ loads mins into R1 for print
+    	LDR R1, [R1]            @ seed printf
+    	BL printf
 	@prints colon
 	BL colon
 	@prints seconds
 	LDR R0, =string         @ seed printf
-    LDR R1, =seconds
-    LDR R1, [R1]            @ seed printf
-    BL printf
+    	LDR R1, =seconds
+    	LDR R1, [R1]            @ seed printf
+    	BL printf
 	@prints colon
 	BL colon
 	@prints hundreths and new line
-	LDR R0, =laststringstring         @ seed printf
-    LDR R1, =hundredths
-    LDR R1, [R1]            @ seed printf
-    BL printf
+	LDR R0, =laststring         @ seed printf
+    	LDR R1, =hundredths
+    	LDR R1, [R1]            @ seed printf
+    	BL printf
 	cmp R9, #2
-	beq main @if 2:00:00 is printed reset to 0:0:0
+	beq _exit @if 2:00:00 is printed reset to 0:0:0
 
-    B _reload @else countnue incrementing hundreths
+    	B _reload @else countnue incrementing hundreths
 
 _incrementSec:
 	mov R7, #0
@@ -71,26 +74,26 @@ _incrementMin:
 	
 _colon:
 	mov     R0, #1          @ 1 = StdOut
-    ldr     R1, =colon 		@sting to print
-    mov     R2, #1         @length of out string
-    mov     R7, #4          @linux write system call
-    svc     0               @call linux to print
+   	ldr     R1, =colon 		@sting to print
+    	mov     R2, #1         @length of out string
+   	mov     R7, #4          @linux write system call
+    	svc     0               @call linux to print
 
 
 _exit:
 	mov     R0, #0          @use 0 return code
 	mov     R7, #1          @service command code 1 
-    svc     0               @call linux to terminate
+	svc     0               @call linux to terminate
 
 .data
 colon:
 		.asciz ":"
 string:
-        .asciz "%d"
+       		.asciz "%d"
 laststring:
 		.asciz "%d\n"
 hundredths:
-        .word   0               @ hundreths count storage for printing
+	        .word   0               @ hundreths count storage for printing
 seconds:
 		.word 	0 				@ seconds count storage for print
 minutes:
