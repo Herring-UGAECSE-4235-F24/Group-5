@@ -1,7 +1,7 @@
 CC = gcc
-CFLAGS = -Wall -o2
+CFLAGS = -Wall -o2 -lbcm2835
 
-SRCS = blinkBcm2835.c
+SRCS = blinkBcm2835.c bcm2835.h
 OBJS = $(SRCS: .c = .o)
 
 TARGET = blinkBcm2835
