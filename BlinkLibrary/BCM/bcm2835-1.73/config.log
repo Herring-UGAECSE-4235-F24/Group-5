@@ -222,8 +222,10 @@ config.status:846: creating Makefile
 config.status:846: creating src/Makefile
 config.status:846: creating doc/Makefile
 config.status:846: creating config.h
+config.status:1027: config.h is unchanged
 config.status:1075: executing depfiles commands
 config.status:1152: cd src       && sed -e '/# am--include-marker/d' Makefile         | make -f - am--depfiles
+make: Nothing to be done for 'am--depfiles'.
 config.status:1157: $? = 0
 
 ## ---------------- ##
@@ -266,7 +268,7 @@ am_cv_prog_cc_c_o=yes
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} '\''/home/group5/Downloads/bcm2835-1.73/missing'\'' aclocal-1.16'
+ACLOCAL='${SHELL} '\''/home/group5/Group-5/BlinkLibrary/BCM/bcm2835-1.73/missing'\'' aclocal-1.16'
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
@@ -275,9 +277,9 @@ AM_BACKSLASH='\'
 AM_DEFAULT_V='$(AM_DEFAULT_VERBOSITY)'
 AM_DEFAULT_VERBOSITY='1'
 AM_V='$(V)'
-AUTOCONF='${SHELL} '\''/home/group5/Downloads/bcm2835-1.73/missing'\'' autoconf'
-AUTOHEADER='${SHELL} '\''/home/group5/Downloads/bcm2835-1.73/missing'\'' autoheader'
-AUTOMAKE='${SHELL} '\''/home/group5/Downloads/bcm2835-1.73/missing'\'' automake-1.16'
+AUTOCONF='${SHELL} '\''/home/group5/Group-5/BlinkLibrary/BCM/bcm2835-1.73/missing'\'' autoconf'
+AUTOHEADER='${SHELL} '\''/home/group5/Group-5/BlinkLibrary/BCM/bcm2835-1.73/missing'\'' autoheader'
+AUTOMAKE='${SHELL} '\''/home/group5/Group-5/BlinkLibrary/BCM/bcm2835-1.73/missing'\'' automake-1.16'
 AWK='mawk'
 CC='gcc'
 CCDEPMODE='depmode=gcc3'
@@ -306,7 +308,7 @@ LDFLAGS=''
 LIBOBJS=''
 LIBS='-lrt '
 LTLIBOBJS=''
-MAKEINFO='${SHELL} '\''/home/group5/Downloads/bcm2835-1.73/missing'\'' makeinfo'
+MAKEINFO='${SHELL} '\''/home/group5/Group-5/BlinkLibrary/BCM/bcm2835-1.73/missing'\'' makeinfo'
 MKDIR_P='/usr/bin/mkdir -p'
 OBJEXT='o'
 PACKAGE='bcm2835'
@@ -345,7 +347,7 @@ host_alias=''
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /home/group5/Downloads/bcm2835-1.73/install-sh'
+install_sh='${SHELL} /home/group5/Group-5/BlinkLibrary/BCM/bcm2835-1.73/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'
