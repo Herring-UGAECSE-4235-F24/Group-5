@@ -71,7 +71,7 @@ _exit:
 
 .data
 string:
-       	.asciz "%2d:%2d:%2d\n"
+       	.asciz "%02d:%02d:%02d\n"
 hundredths:
 	    .word   0               @ hundreths count storage for printing
 seconds:
