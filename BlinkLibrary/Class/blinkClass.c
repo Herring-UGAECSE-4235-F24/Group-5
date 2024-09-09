@@ -1,17 +1,11 @@
+#include "E4235.h"
 #include <stdio.h>
-#include <bcm2835.h>
-#include <unistd.h>
-#include <stdint.h>
-
-
-int main(){
-	int freq = 0;
-	printf("Enter frequency: ");
-	scanf("%d", &freq); //read int for freq
-
-	while(1){
-	E4235_Write(4, HIGH);
-	sleep(1/freq);
-	E4235_Write(4, LOW);
-	}
+int main() {
+E4235_Select(11, 1); // set GPIO 12 to output
+while (1) {
+	E4235_Write(11, 1);
+	E4235_Delaynano(500000);
+	E4235_Write(11, 0);
+	E4235_Delaynano(500000);
+}
 }
