@@ -8,7 +8,7 @@
  // Set the pin to be an output
 
 int main(){
-	bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN, bcm2835.BCM2835_GPIO_FSEL_OUTP);
 	int freq;
     	printf("Enter Freq in Hz: ");
     	if (scanf("%d", &freq) != 1) {
@@ -19,10 +19,10 @@ int main(){
 	printf("your freq is %d", freq);
 
 	while(1){
-	bcm2835_gpio_write(PIN , HIGH); //1 = high
+	bcm2835_gpio_write(PIN , bcm2835.HIGH); //1 = high
 
 	bcm2835_delay(500);		//delay in mils
 	
-	bcm2835_gpio_write(PIN , LOW); //0 = low
+	bcm2835_gpio_write(PIN , bcm2835.LOW); //0 = low
 	}
 }
