@@ -8,7 +8,11 @@
     .func main
 
 
+
 main:
+	b _c
+	
+_reset:
 	ldr r4 , =hundredths 
 	ldr r5 , =seconds
 	ldr r6 , =minutes
@@ -18,6 +22,7 @@ main:
 	str r7, [r4] @using zero reg to reset
 	str r8, [r5]
 	str r9, [r6]
+
 
 	
 	
@@ -44,7 +49,7 @@ _printloop:
     	BL printf
 
 		cmp R9, #2
-		beq main @if 2:00:00 is printed reset to 0:0:0
+		beq _reset @if 2:00:00 is printed reset to 0:0:0
 
    	B _reload @else countnue incrementing hundreths
 
@@ -64,14 +69,76 @@ _incrementMin:
 	b _printloop
 	
 
+
+_s:
+
+_l:
+_c:
+	ldr r4 , =hundredths 
+	ldr r5 , =seconds
+	ldr r6 , =minutes
+	mov r7, #0 @hundredth of a second count when hits 12,000 reset to 0 (aka hit 2 mins)
+	mov r8, #0 @seconds
+	mov r9, #0 @minutes
+	str r7, [r4] @using zero reg to reset
+	str r8, [r5]
+	str r9, [r6]
+	LDR R0, =string         @ seed printf
+    LDR R1, =minutes 
+    LDR R2, =seconds		@ loads mins into R1 for print
+    LDR R3, =hundredths
+    LDR R1, [R1]            @ seed printf
+    LDR R2, [R2]            @ seed printf
+    LDR R3, [R3]            @ seed printf
+    BL printf
+							@turn keyblock on to wait for scanf
+	BL _KeyBlockOn
+	ldr r0, =format
+    ldr r1, =char
+    Bl scanf				@keyblock on so it waits for input to start
+							@cmps to determine which state is next
+	bl _KeyBlockOff			@keyblock is now off so we can read scanf while waiting
+
+_r:
+	b main
+
+
+
+_KeyBlockOff:		@from class lib
+    mov r0, #0 	    @ file descriptor for stdin
+	mov r1, #3	    @ get F_GETFL
+	bl fcntl
+	mvn r2, #2048	@ set inverse O_NONBLOCK
+	and r1, r1, r2	@ combine flags
+	mov r2, r1
+	mov r0, #0	    @ file descriptor for stdin
+	mov r1, #4	    @ set F_SETFL
+    bl fcntl
+	bx lr
+_KeyBlockOn: 		@from class lib
+    mov r0, #0 	    @ file descriptor for stdin
+	mov r1, #3	    @ get F_GETFL
+	bl fcntl
+	mov r2, #2048	@ set O_NONBLOCK
+	orr r1, r1, r2	@ combine flags
+	mov r2, r1
+	mov r0, #0	    @ file descriptor for stdin
+	mov r1, #4	    @ set F_SETFL
+    bl fcntl
+	bx lr
+c:
 _exit:
 	mov     R0, #0          @use 0 return code
 	mov     R7, #1          @service command code 1 
 	svc     0               @call linux to terminate
 
 .data
+char:
+		.asciz ""
 string:
        	.asciz "%02d:%02d:%02d\n"
+format:
+		.asciz "%c"			 	@for reading char	
 hundredths:
 	    .word   0               @ hundreths count storage for printing
 seconds:
