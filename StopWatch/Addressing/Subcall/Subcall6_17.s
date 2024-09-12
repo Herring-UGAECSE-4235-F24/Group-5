@@ -6,8 +6,8 @@
 
 
 	.text
-	.global _start 
-_start:
+	.global main 
+main:
 	ldr  	r0, =0x125		@ r0 = 0x125
 	ldr  	r1, =0x144		@ r1 = 0x144
 	mov  	r2, #0x56		@ r2 = 0x56

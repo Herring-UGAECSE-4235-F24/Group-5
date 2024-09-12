@@ -1,4 +1,4 @@
-OBJS = stopwatch.o
+OBJS = 0_AddressMap.o
 ifdef DEBUG
 DEBUGFLGS = -g
 else
@@ -8,7 +8,7 @@ endif
 %.o : %.s
 	as $(DEBUGFLGS) $< -o $@
 GPIO_OFF: $(OBJS)
-	gcc -o Stopwatch $(OBJS)
+	gcc -o AddressMap $(OBJS)
 
 clean:
-	rm *.o Stopwatch
+	rm *.o AddressMap

@@ -6,8 +6,8 @@
 
 
 	.text
-	.global _start
-_start:
+	.global main
+main:
 	ldr	r0, =0x12345678
 	ldr	r1, =0x86427531
 	add	r2, r0, r1
