@@ -140,9 +140,8 @@ GPIO_BASE:
 mem_fd:
     .word   device
 O_RDWR_O_SYNC:
-        .word   2|256       @ O_RDWR (2)|O_SYNC (256).
+    .word   2|256       @ O_RDWR (2)|O_SYNC (256).
 pinErrorMsgAddr:
-        .word PinErrorMsg       @ pin error message
+    .word PinErrorMsg       @ pin error message
 valErrorMsgAddr:
-        .word ValErrorMsg       @ value error message
-
+    .word ValErrorMsg       @ value error message
