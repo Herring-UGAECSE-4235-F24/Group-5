@@ -25,11 +25,11 @@ int main(){
 	while(1){
 	bcm2835_gpio_write(PIN , HIGH); //1 = high
 
-	bcm2835_delayMicroseconds(5000);		//delay in mils
+	bcm2835_delayMicroseconds(500000);		//delay in mils
 	
 	bcm2835_gpio_write(PIN , LOW); //0 = low
 	
-	bcm2835_delayMicroseconds(5000);
+	bcm2835_delayMicroseconds(500000);
 	}
 	
 }
