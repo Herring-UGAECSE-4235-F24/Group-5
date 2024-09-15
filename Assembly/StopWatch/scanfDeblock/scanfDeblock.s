@@ -5,15 +5,16 @@
 
 main:
 	ldr r0, =format
-    ldr r1, =char
-    Bl scanf				@keyblock on so it waits for input to start
+    	ldr r1, =char
+    	Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char			@loads address of returned char back into r1
-
+	ldrb r1, [r1]
+	cmp r1, #'c'                    @ how you compare chars
+	beq exit
 	b printloop
 
 	cmp r1, #'c'			@ how you compare chars
 	beq _KeyBlockOff
-
 	ldr r0, =format
     ldr r1, =char
 	Bl scanf				@keyblock on so it waits for input to start
@@ -70,7 +71,7 @@ _exit:
 
 .data
 char:
-		.asciz ""
+		.byte  0
 string:
        	.asciz "%c"
 format:
