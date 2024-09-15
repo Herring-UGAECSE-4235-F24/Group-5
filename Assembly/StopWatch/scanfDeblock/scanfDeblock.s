@@ -6,21 +6,23 @@
 main:
 	ldr r0, =format
     	ldr r1, =char
-    	Bl scanf				@keyblock on so it waits for input to start
-	ldr r1, =char			@loads address of returned char back into r1
-	ldrb r1, [r1]
-	cmp r1, #'c'                    @ how you compare chars
-	beq exit
-	b printloop
-
-	cmp r1, #'c'			@ how you compare chars
-	beq _KeyBlockOff
-	ldr r0, =format
-    ldr r1, =char
-	Bl scanf				@keyblock on so it waits for input to start
+    	Bl scanf	
+	ldr r1, =char                   @loads address of returned char back into r1
+        ldrb r1, [r1]
+        cmp r1, #'c'                    @ how you compare chars			@keyblock on so it waits for input to start
+	@beq _On @key deblock is now on
+		
 	ldr r1, =char
+	mov r2, #0
+	str r2, [r1]
+	ldr r0, =format
+	ldr r1, =char
+	Bl scanf				@keyblock on so it waits for input to start
+	ldr r1, =char 
+	ldrb r1, [r1]
+        cmp r1, #'c'
+	b exit @should exit before input is needed
 
-	b printloop
 	
 	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
 	beq _exit
@@ -42,7 +44,7 @@ printloop:
         LDR R3, [R3]            @ seed printf
     	BL printf
 		bx lr
-_KeyBlockOff:		@from class lib
+_Off:		@from class lib
     mov r0, #0 	    @ file descriptor for stdin
 	mov r1, #3	    @ get F_GETFL
 	bl fcntl
@@ -53,7 +55,7 @@ _KeyBlockOff:		@from class lib
 	mov r1, #4	    @ set F_SETFL
     bl fcntl
 	bx lr
-_KeyBlockOn: 		@from class lib
+_On: 		@from class lib
     mov r0, #0 	    @ file descriptor for stdin
 	mov r1, #3	    @ get F_GETFL
 	bl fcntl
