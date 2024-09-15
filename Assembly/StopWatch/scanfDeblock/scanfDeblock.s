@@ -8,6 +8,9 @@ main:
     ldr r1, =char
     Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char			@loads address of returned char back into r1
+
+	b printloop
+
 	ldr r1, [r1]			@actual value of char now in r1
 	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
 	beq _KeyBlockOff
@@ -16,6 +19,9 @@ main:
     ldr r1, =char
 	Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char
+
+	b print loop
+	
 	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
 	beq _exit
 reset:	
@@ -25,6 +31,17 @@ loop:
 	bne loop
 	beq reset
 
+
+printloop:
+		LDR R0, =string         @ seed printf
+    	LDR R1, =minutes 
+        LDR R2, =seconds		@ loads mins into R1 for print
+        LDR R3, =hundredths
+    	LDR R1, [R1]            @ seed printf
+        LDR R2, [R2]            @ seed printf
+        LDR R3, [R3]            @ seed printf
+    	BL printf
+		bx lr
 _KeyBlockOff:		@from class lib
     mov r0, #0 	    @ file descriptor for stdin
 	mov r1, #3	    @ get F_GETFL
