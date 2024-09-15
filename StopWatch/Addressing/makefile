@@ -1,6 +1,6 @@
 OBJS = Addressing.o
 ifdef DEBUG
-DEBUGFLGS = -g
+DEBUGFLGS = -ggdb
 else
 DEBUGFLGS =
 endif
