@@ -9,17 +9,17 @@ main:
     Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char			@loads address of returned char back into r1
 	ldr r1, [r1]			@actual value of char now in r1
-	cmp r1, 0x63			@ 0x63 is hex of c testing if this is how you compare chars
+	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
 	beq _KeyBlockOff
 
 	ldr r0, =format
     ldr r1, =char
 	Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char
-	cmp r1, 0x63			@ 0x63 is hex of c testing if this is how you compare chars
+	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
 	beq _exit
 reset:	
-	ldr r1, #100000
+	mov r1, #1000
 loop: 
 	subs r1, r1, #1
 	bne loop
