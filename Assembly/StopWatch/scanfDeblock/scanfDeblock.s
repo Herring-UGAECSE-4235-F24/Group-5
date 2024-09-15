@@ -12,7 +12,7 @@ main:
 	b printloop
 
 	ldr r1, [r1]			@actual value of char now in r1
-	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
+	cmp r1, #'c'			@ 0x63 is hex of c testing if this is how you compare chars
 	beq _KeyBlockOff
 
 	ldr r0, =format
