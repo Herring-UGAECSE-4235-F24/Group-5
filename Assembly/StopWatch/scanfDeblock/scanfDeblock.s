@@ -20,7 +20,7 @@ main:
 	Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char
 
-	b print loop
+	b printloop
 	
 	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
 	beq _exit
@@ -33,7 +33,7 @@ loop:
 
 
 printloop:
-		LDR R0, =string         @ seed printf
+	LDR R0, =string         @ seed printf
     	LDR R1, =minutes 
         LDR R2, =seconds		@ loads mins into R1 for print
         LDR R3, =hundredths
