@@ -71,8 +71,15 @@ _incrementMin:
 
 
 _s:
-
+	@if stop using blocking of scanf 
+	@if scan f returns r continue from previous state
+	@if L do nothing
+	@if C reset
 _l:
+	@stop printing but count is running in the background still
+	@if scanf retuns L nothing
+	@if scanf returns r continue count from backgrounf running time
+	@if scanf returns c clear count and 
 _c:
 	ldr r4 , =hundredths 
 	ldr r5 , =seconds
@@ -96,6 +103,7 @@ _c:
 	ldr r0, =format
     ldr r1, =char
     Bl scanf				@keyblock on so it waits for input to start
+	ldr 
 							@cmps to determine which state is next
 	bl _KeyBlockOff			@keyblock is now off so we can read scanf while waiting
 
