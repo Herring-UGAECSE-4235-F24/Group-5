@@ -29,6 +29,7 @@ main:
 reset:	
 	mov r1, #1000
 loop: 
+	bl printloop
 	subs r1, r1, #1
 	bne loop
 	beq reset
@@ -75,9 +76,9 @@ _exit:
 char:
 		.byte  0
 string:
-       	.asciz "%c"
+       	.asciz " %c"
 format:
-		.asciz "%c"			 	@for reading char	
+		.asciz " %c"			 	@for reading char	
 hundredths:
 	    .word   0               @ hundreths count storage for printing
 seconds:
