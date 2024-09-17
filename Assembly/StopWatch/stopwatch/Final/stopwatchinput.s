@@ -46,7 +46,7 @@ _reload:
         cmp r1, #'s'
         beq _stop
 
-	ldr r3, =6000000 @whatever time is a hunredth of a sec based on delay loop 
+	ldr r3, =9030000 @whatever time is a hunredth of a sec based on delay loop 
 	add r7, r7, #1 @increments every hundreth of a second
 	ldr r4, =hundredths
 	str r7, [r4] @strs back to hundreths .data
