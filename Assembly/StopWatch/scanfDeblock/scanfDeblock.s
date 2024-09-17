@@ -4,35 +4,37 @@
 
 
 main:
+	@keydebock on code
+        mov r0, #0          @ file descriptor for stdin
+        mov r1, #3          @ get F_GETFL
+        bl fcntl
+        mov r2, #2048   @ set O_NONBLOCK
+        orr r1, r1, r2  @ combine flags
+        mov r2, r1
+        mov r0, #0          @ file descriptor for stdin
+        mov r1, #4          @ set F_SETFL
+        bl fcntl
+
 	ldr r0, =format
     	ldr r1, =char
     	Bl scanf	
 	ldr r1, =char                   @loads address of returned char back into r1
         ldrb r1, [r1]
         cmp r1, #'c'                    @ how you compare chars			@keyblock on so it waits for input to start
-	@beq _On @key deblock is now on
-		
-	ldr r1, =char
-	mov r2, #0
-	str r2, [r1]
-	ldr r0, =format
-	ldr r1, =char
-	Bl scanf				@keyblock on so it waits for input to start
-	ldr r1, =char 
-	ldrb r1, [r1]
-        cmp r1, #'c'
-	b exit @should exit before input is needed
-
+	beq exit
 	
-	cmp r1, #0x63			@ 0x63 is hex of c testing if this is how you compare chars
-	beq _exit
+	
 reset:	
-	mov r1, #1000
+	mov r10, #1000
 loop: 
 	bl printloop
-	subs r1, r1, #1
+	subs r10, r10, #1
 	bne loop
-	beq reset
+	ldr r1, =char 
+        ldrb r1, [r1]
+        cmp r1, #'c'
+        beq exit
+	b reset
 
 
 printloop:
@@ -44,7 +46,7 @@ printloop:
         LDR R2, [R2]            @ seed printf
         LDR R3, [R3]            @ seed printf
     	BL printf
-		bx lr
+	BX lr
 _Off:		@from class lib
     mov r0, #0 	    @ file descriptor for stdin
 	mov r1, #3	    @ get F_GETFL
@@ -57,7 +59,7 @@ _Off:		@from class lib
     bl fcntl
 	bx lr
 _On: 		@from class lib
-    mov r0, #0 	    @ file descriptor for stdin
+    	mov r0, #0 	    @ file descriptor for stdin
 	mov r1, #3	    @ get F_GETFL
 	bl fcntl
 	mov r2, #2048	@ set O_NONBLOCK
@@ -65,7 +67,7 @@ _On: 		@from class lib
 	mov r2, r1
 	mov r0, #0	    @ file descriptor for stdin
 	mov r1, #4	    @ set F_SETFL
-    bl fcntl
+   	bl fcntl
 	bx lr
 _exit:
 	mov     R0, #0          @use 0 return code
