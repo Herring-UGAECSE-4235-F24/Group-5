@@ -4,24 +4,15 @@
 
 
 main:
-	@keydebock on code
-        mov r0, #0          @ file descriptor for stdin
-        mov r1, #3          @ get F_GETFL
-        bl fcntl
-        mov r2, #2048   @ set O_NONBLOCK
-        orr r1, r1, r2  @ combine flags
-        mov r2, r1
-        mov r0, #0          @ file descriptor for stdin
-        mov r1, #4          @ set F_SETFL
-        bl fcntl
-
 	ldr r0, =format
-    	ldr r1, =char
-    	Bl scanf	
+    ldr r1, =char
+    Bl scanf	
 	ldr r1, =char                   @loads address of returned char back into r1
-        ldrb r1, [r1]
-        cmp r1, #'c'                    @ how you compare chars			@keyblock on so it waits for input to start
-	beq exit
+    ldrb r1, [r1]
+    cmp r1, #'c'                    @ how you compare chars			@keyblock on so it waits for input to start
+	bne main
+	b exit
+
 	
 	
 reset:	
@@ -47,28 +38,6 @@ printloop:
         LDR R3, [R3]            @ seed printf
     	BL printf
 	BX lr
-_Off:		@from class lib
-    mov r0, #0 	    @ file descriptor for stdin
-	mov r1, #3	    @ get F_GETFL
-	bl fcntl
-	mvn r2, #2048	@ set inverse O_NONBLOCK
-	and r1, r1, r2	@ combine flags
-	mov r2, r1
-	mov r0, #0	    @ file descriptor for stdin
-	mov r1, #4	    @ set F_SETFL
-    bl fcntl
-	bx lr
-_On: 		@from class lib
-    	mov r0, #0 	    @ file descriptor for stdin
-	mov r1, #3	    @ get F_GETFL
-	bl fcntl
-	mov r2, #2048	@ set O_NONBLOCK
-	orr r1, r1, r2	@ combine flags
-	mov r2, r1
-	mov r0, #0	    @ file descriptor for stdin
-	mov r1, #4	    @ set F_SETFL
-   	bl fcntl
-	bx lr
 _exit:
 	mov     R0, #0          @use 0 return code
 	mov     R7, #1          @service command code 1 
