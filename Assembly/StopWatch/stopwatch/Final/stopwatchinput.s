@@ -10,7 +10,7 @@
 
 
 main:
-	b _c
+	b _clear
 
 resetChar:
 	ldr r1, =char
@@ -20,27 +20,28 @@ resetChar:
 checkScan:
 	ldr r1, =char                   @loads address of returned char back into r1
 	ldrb r1, [r1]
-    cmp r1, #'r' 
-	beq r
+    	cmp r1, #'r' 
+	beq _run
 	cmp r1, #'c'
-	beq c 
+	beq _clear 
 	cmp r1, #'l'
-	beq l
+	beq _lap
 	cmp r1, #'s'
-	beq s
+	beq _stop
 	bx lr
 display_time:
 	LDR R0, =string         @ seed printf
-    LDR R1, =minutes 
-    LDR R2, =seconds		@ loads mins into R1 for print
-    LDR R3, =hundredths
-    LDR R1, [R1]            @ seed printf
-    LDR R2, [R2]            @ seed printf
-    LDR R3, [R3]            @ seed printf
-    BL printf
+        LDR R1, =minutes 
+        LDR R2, =seconds		@ loads mins into R1 for print
+        LDR R3, =hundredths
+        LDR R1, [R1]            @ seed printf
+        LDR R2, [R2]            @ seed printf
+        LDR R3, [R3]            @ seed printf
+        BL printf
 _reload:
 	ldr r3, =6000000 @whatever time is a hunredth of a sec based on delay loop 
 	add r7, r7, #1 @increments every hundreth of a second
+	ldr r4, =hundredths
 	str r7, [r4] @strs back to hundreths .data
 	cmp r7, #100
 	BEQ _incrementSec
@@ -49,7 +50,10 @@ _delayloop:
 	bl checkScan
 	subs r3, r3, #1
 	bne  _delayloop
-	b _reload
+	ldr r1, =Lap
+	ldr r1, [r1]
+	cmp r1, #0
+	beq display_time
 	
 _incrementSec:
 	mov R7, #0
@@ -72,7 +76,7 @@ _incrementMin:
 	b _reload
 
 
-_s:
+_stop:
 	@if stop using blocking of scanf 
 	bl resetChar
 	bl block
@@ -82,14 +86,14 @@ _s:
 	ldr r1, =char                   @loads address of returned char back into r1
     ldrb r1, [r1]
     cmp r1, #'r' 
-	beq r
+	beq _run
 	cmp r1, #'c'
-	beq c
-	b s
+	beq _clear
+	b _stop
 	@if scan f returns r continue from previous state
 	@if L do nothing
 	@if C reset
-_l:
+_lap:
 	@stop printing but count is running in the background still
 	bl resetChar
 	bl deblock
@@ -105,7 +109,7 @@ _l:
 	@if scanf retuns L nothing
 	@if scanf returns r continue count from backgrounf running time
 	@if scanf returns c clear count and 
-_c:
+_clear:
 	ldr r4 , =hundredths 
 	ldr r5 , =seconds
 	ldr r6 , =minutes
@@ -124,26 +128,25 @@ _c:
     LDR R3, [R3]            @ seed printf
     BL printf
 							@turn keyblock on to wait for scanf
-	bl block
-wait:	
+	
 	ldr r0, =format
     ldr r1, =char
     Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char                   @loads address of returned char back into r1
     ldrb r1, [r1]
     cmp r1, #'r' 
-	beq r
-	b wait
+    bne _clear
+    
 
-_r:
+_run:
 	bl resetChar
 	bl deblock
 	mov r1, #0
 	ldr r2, =Lap
 	str r1, [r2]  @used to check if lap or just run to display
 	ldr r0, =format
-    ldr r1, =char
-    Bl scanf
+	ldr r1, =char
+    	Bl scanf
 	b _reload
 
 
@@ -155,7 +158,7 @@ _exit:
 deblock:
     mov r0, #1    @sets deblock to 1
     bl E4235_KYBdeblock
-	bx lr
+    bx lr
 block:
 	mov r0, #0
 	bl E4235_KYBdeblock	
@@ -165,11 +168,11 @@ block:
 char:
 		.byte  0
 string:
-       	.asciz "%02d:%02d:%02d\n"
+       	        .asciz "%02d:%02d:%02d\n"
 format:
 		.asciz " %c"			 	@for reading char	
 hundredths:
-	    .word   0               @ hundreths count storage for printing
+	        .word   0               @ hundreths count storage for printing
 seconds:
 		.word 	0 				@ seconds count storage for print
 minutes:
