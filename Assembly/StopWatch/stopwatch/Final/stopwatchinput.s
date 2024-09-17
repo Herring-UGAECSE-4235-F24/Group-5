@@ -12,19 +12,9 @@
 main:
 	b _clear
 
-checkScan:
-	ldr r1, =char                   @loads address of returned char back into r1
-	ldrb r1, [r1]
-    	cmp r1, #'r' 
-	beq _run
-	cmp r1, #'c'
-	beq _clear 
-	cmp r1, #'l'
-	beq _lap
-	cmp r1, #'s'
-	beq _stop
-	bx lr
+
 display_time:
+	
 	LDR R0, =string         @ seed printf
         LDR R1, =minutes 
         LDR R2, =seconds		@ loads mins into R1 for print
@@ -35,7 +25,27 @@ display_time:
         BL printf
 
 
+
 _reload:
+	ldr r1, =char
+        mov r2, #0
+        strb r2, [r1]
+	
+	@checks for scans
+        ldr r0, =format
+        ldr r1, =char
+        bl scanf   
+        ldr r1, =char                   @loads address of returned char back into r1
+        ldrb r1, [r1]
+        cmp r1, #'r' 
+        beq _run
+        cmp r1, #'c'
+        beq _clear 
+        cmp r1, #'l'
+        beq _lap
+        cmp r1, #'s'
+        beq _stop
+
 	ldr r3, =6000000 @whatever time is a hunredth of a sec based on delay loop 
 	add r7, r7, #1 @increments every hundreth of a second
 	ldr r4, =hundredths
@@ -44,14 +54,13 @@ _reload:
 	BEQ _incrementSec
 	
 _delayloop:
-	bl checkScan
 	subs r3, r3, #1
 	bne  _delayloop
 	ldr r1, =Lap
 	ldr r1, [r1]
 	cmp r1, #0
 	bleq display_time
-	
+	b _reload
 _incrementSec:
 	mov R7, #0
 	ldr r4, =hundredths
@@ -77,14 +86,20 @@ _incrementMin:
 
 
 _stop:
-	@if stop using blocking of scanf 
-		bl block
+	@if stop using blocking of scanf
+	ldr r1, =char
+        mov r2, #0
+        strb r2, [r1]
+	
+	mov r0, #0
+        bl E4235_KYBdeblock
+
 	ldr r0, =format
-    ldr r1, =char
-    Bl scanf				@keyblock on so it waits for input to start
+    	ldr r1, =char
+    	Bl scanf				@keyblock on so it waits for input to start
 	ldr r1, =char                   @loads address of returned char back into r1
-    ldrb r1, [r1]
-    cmp r1, #'r' 
+	ldrb r1, [r1]
+    	cmp r1, #'r' 
 	beq _run
 	cmp r1, #'c'
 	beq _clear
@@ -94,20 +109,23 @@ _stop:
 	@if C reset
 _lap:
 	@stop printing but count is running in the background still
-		bl deblock
+	mov r0, #1    @sets deblock to 1
+    	bl E4235_KYBdeblock
+
 	mov r1, #1
 	ldr r2, =Lap
 	str r1, [r2]  @used to check if lap or just run to decide if we need to display or not
 
-	ldr r0, =format
-    ldr r1, =char
-    Bl scanf
 	b _reload
 
 	@if scanf retuns L nothing
 	@if scanf returns r continue count from backgrounf running time
 	@if scanf returns c clear count and 
 _clear:
+	ldr r1, =char
+        mov r2, #0
+        strb r2, [r1]
+	
 	mov r0, #0
         bl E4235_KYBdeblock     
         
@@ -142,9 +160,12 @@ _clear:
     
 
 _run:
+	ldr r1, =char
+        mov r2, #0
+        strb r2, [r1]
 	
-	 mov r0, #1    @sets deblock to 1
-	 bl E4235_KYBdeblock
+	mov r0, #1    @sets deblock to 1
+	bl E4235_KYBdeblock
 
 	mov r1, #0
 	ldr r2, =Lap
