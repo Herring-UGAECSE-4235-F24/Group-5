@@ -13,6 +13,9 @@ main:
 	bne main
 	b exit
 
+	mov r0, #0
+    bl E4235_KYBdeblock
+
 	
 	
 reset:	
