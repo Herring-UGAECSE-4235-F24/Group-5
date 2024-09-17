@@ -12,11 +12,6 @@
 main:
 	b _clear
 
-resetChar:
-	ldr r1, =char
-	mov r2, #0
-	str r2, [r1]
-	bx lr
 checkScan:
 	ldr r1, =char                   @loads address of returned char back into r1
 	ldrb r1, [r1]
@@ -38,6 +33,8 @@ display_time:
         LDR R2, [R2]            @ seed printf
         LDR R3, [R3]            @ seed printf
         BL printf
+
+
 _reload:
 	ldr r3, =6000000 @whatever time is a hunredth of a sec based on delay loop 
 	add r7, r7, #1 @increments every hundreth of a second
@@ -53,33 +50,35 @@ _delayloop:
 	ldr r1, =Lap
 	ldr r1, [r1]
 	cmp r1, #0
-	beq display_time
+	bleq display_time
 	
 _incrementSec:
 	mov R7, #0
+	ldr r4, =hundredths
 	str R7, [R4] 		@hundreths is reset to 0 in mem
 	add R8, R8, #1
+	ldr r5, =seconds
 	str R8, [R5]		@seconds is incremented in mem
 	cmp R8, #60			@if 60 secs increment min
 	beq _incrementMin
-	
+	b _reload
 _incrementMin:
 	mov R8,	#0 			@resets seconds to zero in mem
 	str R8, [R5]
 	add R9, R9, #1
+	ldr r6, =minutes
 	str R9, [R6] 		@increments min in mem		
 	
 	ldr r1, =Lap
 	ldr r1, [r1]
 	cmp r1, #0
-	beq display_time
+	bleq display_time
 	b _reload
 
 
 _stop:
 	@if stop using blocking of scanf 
-	bl resetChar
-	bl block
+		bl block
 	ldr r0, =format
     ldr r1, =char
     Bl scanf				@keyblock on so it waits for input to start
@@ -95,8 +94,7 @@ _stop:
 	@if C reset
 _lap:
 	@stop printing but count is running in the background still
-	bl resetChar
-	bl deblock
+		bl deblock
 	mov r1, #1
 	ldr r2, =Lap
 	str r1, [r2]  @used to check if lap or just run to decide if we need to display or not
@@ -110,6 +108,10 @@ _lap:
 	@if scanf returns r continue count from backgrounf running time
 	@if scanf returns c clear count and 
 _clear:
+	mov r0, #0
+        bl E4235_KYBdeblock     
+        
+
 	ldr r4 , =hundredths 
 	ldr r5 , =seconds
 	ldr r6 , =minutes
@@ -119,40 +121,49 @@ _clear:
 	str r7, [r4] @using zero reg to reset
 	str r8, [r5]
 	str r9, [r6]
+
 	LDR R0, =string         @ seed printf
-    LDR R1, =minutes 
-    LDR R2, =seconds		@ loads mins into R1 for print
-    LDR R3, =hundredths
-    LDR R1, [R1]            @ seed printf
-    LDR R2, [R2]            @ seed printf
-    LDR R3, [R3]            @ seed printf
-    BL printf
-							@turn keyblock on to wait for scanf
-	
-	ldr r0, =format
-    ldr r1, =char
-    Bl scanf				@keyblock on so it waits for input to start
-	ldr r1, =char                   @loads address of returned char back into r1
-    ldrb r1, [r1]
-    cmp r1, #'r' 
-    bne _clear
+        LDR R1, =minutes 
+        LDR R2, =seconds                @ loads mins into R1 for print
+        LDR R3, =hundredths
+        LDR R1, [R1]            @ seed printf
+        LDR R2, [R2]            @ seed printf
+        LDR R3, [R3]            @ seed printf
+        BL printf
+        
+						@turn keyblock on to wait for scanf
+    	ldr r0, =format
+    	ldr r1, =char
+    	Bl scanf				@keyblock on so it waits for input to start
+    	ldr r1, =char                   @loads address of returned char back into r1
+    	ldrb r1, [r1]
+    	cmp r1, #'r' 
+	bne _clear
     
 
 _run:
-	bl resetChar
-	bl deblock
+	
+	 mov r0, #1    @sets deblock to 1
+	 bl E4235_KYBdeblock
+
 	mov r1, #0
 	ldr r2, =Lap
 	str r1, [r2]  @used to check if lap or just run to display
 	ldr r0, =format
 	ldr r1, =char
-    	Bl scanf
+	mov r2, #0
+	strb r2, [r1]
+    	bl scanf
+	ldr r1, =char                   @loads address of returned char back into r1
+        ldrb r1, [r1]
+        cmp r1, #'c' 
+	beq exit
 	b _reload
 
 
 _exit:
 	mov     R0, #0          @use 0 return code
-	mov     R7, #1          @service command code 1 
+	mov R7, #1          @service command code 1 
 	svc     0               @call linux to terminate
 
 deblock:
