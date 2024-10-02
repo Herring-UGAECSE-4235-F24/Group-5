@@ -2,8 +2,7 @@
 //#include <Keypad.h>
 //#include "E4235.h"
 #include <stdio.h>
-//gcc blinkClass.c -o blinkClass -lE4235
-//gcc blinkClass.c -o blinkClass E4235_Delaynano.s E4235_Select.s E4235_Write.s
+//gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s
 extern int E4235_Write(int GPIO, int state);
 extern int E4235_Select(int GPIO, int state);
 extern int E4235_Read(int GPIO);
