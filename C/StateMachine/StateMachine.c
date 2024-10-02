@@ -2,6 +2,7 @@
 //#include <Keypad.h>
 //#include "E4235.h"
 #include <stdio.h>
+#include <ctype.h>
 //gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s
 extern int E4235_Write(int GPIO, int state);
 extern int E4235_Select(int GPIO, int state);
@@ -10,16 +11,16 @@ extern void E4235_DelayMicro(int count);
 // Define the row and column pins
 const int ROWS = 4; // Four rows
 const int COLS = 4; // Four columns
+const int rowPins[4] = {20, 21, 22, 23}; // Connect to the row pins of the keypad
+const int colPins[4] = {24, 25, 26, 27};  // Connect to the column pins of the keypad
+  
 
-// Define the row and column pin connections
-int rowPins[ROWS] = {20, 21, 22, 23}; // Connect to the row pins of the keypad
-int colPins[COLS] = {24, 25, 26, 27};  // Connect to the column pins of the keypad
 
 
 
 // Define the keymap
 char getKey(int x, int y) {
-  char keys[ROWS][COLS] = {
+  char keys[4][4] = {
     {'1', '2', '3', 'A'},
     {'4', '5', '6', 'B'},
     {'7', '8', '9', 'C'},
@@ -35,10 +36,12 @@ char keypadRead() {
 	  E4235_Write(rowPins[i], 1); //high output 1
 	  for (int j = 0; j < 4; j++) {
 	    if (E4235_Read(colPins[j]) == 1) { //high output 1
-		    E4235_DelayMicro(500000); //debounce delay of half a second
+		   // E4235_DelayMicro(500000); //debounce delay of half a second
 		    if(E4235_Read(colPins[j]) == 1) { //high output 1
 			    E4235_Write(rowPins[i], 0); //low output 0
-			    return getKey(i,j);
+          char key = getKey(i,j);
+          printf("pressed: %c", &key);
+          return key;
 		    }
 	    }
     }
@@ -65,7 +68,7 @@ void asciiMode(char key){
 void binaryMode(char key){
 int GPIO = 10;
 int binary = 40; //default
-  if (isDigit(key)){
+  if (isdigit(key)){
   int binary = key -'0'; // char conversion to int
   }else if(key == 'A'){
     int binary = 10;
@@ -91,18 +94,26 @@ int binary = 40; //default
 //to get correct ascii number we can just convert char to int to retrieve ascii value
 int main(){
  // Define the row and column pins as ouputs and inputs
+  // Define the row and column pin connections
+  
   for(int i = 0; i < ROWS; i++) {
   E4235_Select(rowPins[i], 1); //setting rows to be outputs
   E4235_Select(colPins[i], 0); //setting cols as inputs
   }
 
   int swapMode = 0;
+  
+  
+  
+  
+  
   while(1){
     E4235_DelayMicro(500);// will give 1khz clock
     //output gpio 9 high
     E4235_Write(9,1);
     //Get the key pressed we can use the GPIO 9 to replace the msb output for a clock to our analyzer if needed.
     char key =  keypadRead(); //this will convert the char into ascii
+    printf("pressed: %c", &key);
     if(key == '#'){
       swapMode++;
     } else if (key == '*'){
@@ -117,3 +128,5 @@ int main(){
   E4235_Write(9,0);
   }
 }
+
+
