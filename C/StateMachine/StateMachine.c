@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "bcm2835.h"
+#include <gpiotopin.h>
+
+#define PINS[4] ={RPI_GPIO_P1_18, RPI_GPIO_P1_22,   RPI_V2_GPIO_P1_37,   RPI_V2_GPIO_P1_13 }
 //gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s
 extern int E4235_Write(int GPIO, int state);
 extern int E4235_Select(int GPIO, int state);
@@ -16,6 +19,7 @@ const int COLS = 4; // Four columns
 const int rowPins[4] = {20, 21, 22, 23}; // Connect to the row pins of the keypad
 const int colPins[4] = {24, 25, 26, 27};  // Connect to the column pins of the keypad
   
+
 
 
 
@@ -35,9 +39,9 @@ char keypadRead() {
   for (int i = 0; i < 4; i++) {
 	  E4235_Write(rowPins[i], 1); //high output 1
 	  for (int j = 0; j < 4; j++) {
-	    if (E4235_Read(colPins[j]) == 1) { //high output 1
-		    //E4235_DelayMicro(100000); //debounce delay of tenth a second
-		    if(E4235_Read(colPins[j]) == 1) { //high output 1
+	    if (bcm2835_gpio_lev(PINS[j]) == 1) { //high output 1
+		    E4235_DelayMicro(100000); //debounce delay of tenth a second
+		    if(bcm2835_gpio_lev(PINS[j]) == 1) { //high output 1
 			    E4235_Write(rowPins[i], 0); //low output 0
           char key = keys[i][j];
           printf("pressed");
@@ -95,7 +99,10 @@ int binary = 40; //default
 int main(){
  // Define the row and column pins as ouputs and inputs
  // Define the row and column pin connections
-  
+   if (!bcm2835_init()){
+        return 1;
+    }
+
   for(int i = 0; i < ROWS; i++) {
   E4235_Select(rowPins[i], 1); //setting rows to be outputs
   E4235_Write(rowPins[i], 1);
@@ -104,7 +111,7 @@ int main(){
   
   int pressed = 0;
   while(!pressed){
-    if(E4235_Read(26) == 1){
+    if(bcm2835_gpio_lev(PINS[2]) == 1){
       exit(0);
     }
     pressed = E4235_Read(26);
