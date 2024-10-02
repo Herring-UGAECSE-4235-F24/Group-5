@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "bcm2835.h"
-#include <gpiotopin.h>
 
-#define PINS[4] ={RPI_GPIO_P1_18, RPI_GPIO_P1_22,   RPI_V2_GPIO_P1_37,   RPI_V2_GPIO_P1_13 }
-//gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s
+
+
+//gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s -lbcm2835 -Wall
 extern int E4235_Write(int GPIO, int state);
 extern int E4235_Select(int GPIO, int state);
 extern int E4235_Read(int GPIO);
@@ -16,10 +16,10 @@ extern void E4235_DelayMicro(int count);
 // Define the row and column pins
 const int ROWS = 4; // Four rows
 const int COLS = 4; // Four columns
-const int rowPins[4] = {20, 21, 22, 23}; // Connect to the row pins of the keypad
+const int rowPins[4] = {20, 17, 19, 23}; // Connect to the row pins of the keypad
 const int colPins[4] = {24, 25, 26, 27};  // Connect to the column pins of the keypad
-  
-
+const int pins[4] = {RPI_GPIO_P1_18, RPI_GPIO_P1_22,   RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_13};
+const int outputPins[8] = {10, 11, 12, 13, 14, 15, 16, 17};
 
 
 
@@ -39,12 +39,12 @@ char keypadRead() {
   for (int i = 0; i < 4; i++) {
 	  E4235_Write(rowPins[i], 1); //high output 1
 	  for (int j = 0; j < 4; j++) {
-	    if (bcm2835_gpio_lev(PINS[j]) == 1) { //high output 1
-		    E4235_DelayMicro(100000); //debounce delay of tenth a second
-		    if(bcm2835_gpio_lev(PINS[j]) == 1) { //high output 1
+	    if (bcm2835_gpio_lev(pins[j]) == 1) { //high output 1
+        
+		    E4235_DelayMicro(20000); //debounce delay of tenth a second
+		    if(bcm2835_gpio_lev(pins[j]) == 1) { //high output 1
 			    E4235_Write(rowPins[i], 0); //low output 0
           char key = keys[i][j];
-          printf("pressed");
           return key;
 		    }
 	    }
@@ -55,44 +55,54 @@ return 0;
 }
 
 void asciiMode(char key){
+ if(key == '\0'){
+   key = '@';
+ }
  int GPIO = 10;
  int ascii = key;
-  while(GPIO<18){
+  while(GPIO<17){
     if(ascii>0){
     int output = ascii % 2;
+    printf("%d",output);
     E4235_Write(GPIO, output); //outputs high or low depending on first bit
     ascii = ascii>>1;
     } else{
       E4235_Write(GPIO,0);
+      printf("0");
     }
     GPIO ++;
   }
+  
 }
 
 void binaryMode(char key){
+//printf("(Key recieved: %c )", key);
 int GPIO = 10;
-int binary = 40; //default
-  if (isdigit(key)){
-  int binary = key -'0'; // char conversion to int
-  }else if(key == 'A'){
-    int binary = 10;
+int binary = key -'0';// char conversion to int
+  if(key == 'A'){
+    binary = 10;
   } else if(key == 'B'){
-    int binary = 11;
+    binary = 11;
   } else if(key == 'C'){
-    int binary = 12;
+    binary = 12;
   } else if(key =='D'){
-    int binary = 13;
+    binary = 13;
+  } else if (key== '\0'){
+    binary = 40;
   }
-    while(GPIO<18){
+    while(GPIO<17){
       if(binary>0){
         int output = binary % 2; //gives lsb to output
+        printf("%d",output);
         E4235_Write(GPIO, output); //outputs high or low depending on first bit
         binary = binary>>1; //right shift to
       } else {
-      E4235_Write(GPIO,0);
+        E4235_Write(GPIO,0);
+        printf("0");
       }
       GPIO ++;
     }
+  printf("----------------------");
 }
 
 //to get correct ascii number we can just convert char to int to retrieve ascii value
@@ -109,28 +119,32 @@ int main(){
   E4235_Select(colPins[i], 0);
   }
   
-  int pressed = 0;
-  while(!pressed){
-    if(bcm2835_gpio_lev(PINS[2]) == 1){
-      exit(0);
-    }
-    pressed = E4235_Read(26);
-    printf("%d", pressed);
+  for(int i = 0; i<8; i++){
+     E4235_Write(outputPins[i], 0);
   }
-  int swapMode = 0;
+  
+  int swapMode = 1;
   
   
   
   
   
   while(1){
-    E4235_DelayMicro(500);// will give 1khz clock
+    E4235_DelayMicro(5000);// will give 1khz clock
     //output gpio 9 high
     E4235_Write(9,1);
     //Get the key pressed we can use the GPIO 9 to replace the msb output for a clock to our analyzer if needed.
+    
     char key =  keypadRead(); //this will convert the char into ascii
+    //printf(":%c", key);
     if(key == '#'){
       swapMode++;
+      E4235_DelayMicro(100);// 
+      if(swapMode % 2 == 0){
+        printf("Binary Mode On, %d", swapMode);
+      } else {
+        printf("ASCII Mode On, %d", swapMode);
+      }
     } else if (key == '*'){
       swapMode = 0;
       key = '@';
@@ -139,8 +153,9 @@ int main(){
     } else {
       asciiMode(key);
     }
-  E4235_DelayMicro(500);
+  E4235_DelayMicro(5000);
   E4235_Write(9,0);
+  printf("cycle");
   }
 }
 
