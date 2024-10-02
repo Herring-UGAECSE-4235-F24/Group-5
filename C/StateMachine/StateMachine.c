@@ -35,9 +35,9 @@ char keypadRead() {
   for (int i = 0; i < 4; i++) {
 	  E4235_Write(rowPins[i], 1); //high output 1
 	  for (int j = 0; j < 4; j++) {
-	    if (E4235_Read(colPins[j]) == 1) { //high output 1
-		   // E4235_DelayMicro(500000); //debounce delay of half a second
-		    if(E4235_Read(colPins[j]) == 1) { //high output 1
+	    if (E4235_Read(colPins[j])) { //high output 1
+		    E4235_DelayMicro(100000); //debounce delay of tenth a second
+		    if(E4235_Read(colPins[j])) { //high output 1
 			    E4235_Write(rowPins[i], 0); //low output 0
           char key = getKey(i,j);
           printf("pressed: %c", &key);
@@ -113,7 +113,6 @@ int main(){
     E4235_Write(9,1);
     //Get the key pressed we can use the GPIO 9 to replace the msb output for a clock to our analyzer if needed.
     char key =  keypadRead(); //this will convert the char into ascii
-    printf("pressed: %c", &key);
     if(key == '#'){
       swapMode++;
     } else if (key == '*'){
