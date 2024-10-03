@@ -98,9 +98,9 @@ int binary = key -'0';// char conversion to int
   } else if(key =='D'){
     binary = 13;
   } else if (key== '\0'){
-    binary = 40;
+    binary = 64;
   }else if (key== '@'){
-    binary = 40;
+    binary = 64;
   }
     while(GPIO<8){
       if(binary>0){
