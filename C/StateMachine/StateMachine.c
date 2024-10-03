@@ -8,12 +8,12 @@
 
 
 
-//gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s E4235_PWM_SET.s E4235_PWM_Enable.s -lbcm2835 -Wall
+//gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s E4235_PWM_Set.s E4235_PWM_Enable.s -lbcm2835 -Wall
 extern int E4235_Write(int GPIO, int state);
 extern int E4235_Select(int GPIO, int state);
 extern int E4235_Read(int GPIO);
 extern void E4235_DelayMicro(int count);
-extern int E4235_PWM_SET ( int GPIO, int FREQ, int DUTY );
+extern int E4235_PWM_Set ( int GPIO, int FREQ, int DUTY );
 extern void E4235_PWM_Enable (int GPIO, int enable);
 // Define the row and column pins
 const int ROWS = 4; // Four rows
@@ -22,8 +22,8 @@ const int rowPins[4] = {20, 17, 19, 23}; // Connect to the row pins of the keypa
 const int colPins[4] = {24, 25, 26, 27};  // Connect to the column pins of the keypad
 const int pins[4] = {RPI_GPIO_P1_18, RPI_GPIO_P1_22,   RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_13};
 const int outputPins[8] = {10, 4, 12, 18, 7, 15, 16, 17};
-
-
+int pressed = 0;
+char prev;
 
 
 // Define the keymap
@@ -43,10 +43,18 @@ char keypadRead() {
 	  for (int j = 0; j < 4; j++) {
 	    if (bcm2835_gpio_lev(pins[j]) == 1) { //high output 1
         
-		    E4235_DelayMicro(20000); //debounce delay of tenth a second
+		    //E4235_DelayMicro(20000); //debounce delay of tenth a second
 		    if(bcm2835_gpio_lev(pins[j]) == 1) { //high output 1
 			    E4235_Write(rowPins[i], 0); //low output 0
           char key = keys[i][j];
+          if(key != '*'){
+            if(key!='#'){
+            prev = key;
+            }
+          pressed = 1;
+          } else {
+          pressed = 0;
+          }
           return key;
 		    }
 	    }
@@ -65,16 +73,16 @@ void asciiMode(char key){
   while(GPIO<8){
     if(ascii>0){
     int output = ascii % 2;
-    printf("%d",output);
+    //printf("%d",output);
     E4235_Write(outputPins[GPIO], output); //outputs high or low depending on first bit
     ascii = ascii>>1;
     } else{
       E4235_Write(outputPins[GPIO],0);
-      printf("0");
+      //printf("0");
     }
     GPIO ++;
   }
-  
+    
 }
 
 void binaryMode(char key){
@@ -91,20 +99,23 @@ int binary = key -'0';// char conversion to int
     binary = 13;
   } else if (key== '\0'){
     binary = 40;
+  }else if (key== '@'){
+    binary = 40;
   }
     while(GPIO<8){
       if(binary>0){
         int output = binary % 2; //gives lsb to output
-        printf("%d",output);
+        //printf("%d",output);
         E4235_Write(outputPins[GPIO], output); //outputs high or low depending on first bit
         binary = binary>>1; //right shift to
       } else {
         E4235_Write(outputPins[GPIO],0);
-        printf("0");
+        //printf("0");
       }
       GPIO ++;
     }
-  printf("----------------------");
+  //printf("----------------------");
+  
 }
 
 //to get correct ascii number we can just convert char to int to retrieve ascii value
@@ -127,23 +138,65 @@ int main(){
     E4235_Select(outputPins[i], 1);
      E4235_Write(outputPins[i], 0);
   }
-  E4235_PWM_SET(13,1000,50);
-  E4235_PWM_Enable(13, 1);
+
   int swapMode = 0;
   
   
   
   
-  
   while(1){
-    //E4235_DelayMicro(500);// will give 1khz clock
+
+    E4235_DelayMicro(80);// will give 1khz clock
     //output gpio 9 high
-   // E4235_Write(9,1);
+    E4235_Write(9,1);
     //Get the key pressed we can use the GPIO 9 to replace the msb output for a clock to our analyzer if needed.
     
     char key =  keypadRead(); //this will convert the char into ascii
-    //printf(":%c", key);
-    if(key == '#'){
+    if(key == '\0' && pressed){
+      printf("reached");
+      if(swapMode % 2 == 0){
+        binaryMode(prev);
+           int count = 2000;
+      while(count>0){
+        E4235_DelayMicro(500);
+        E4235_Write(9,1);
+        E4235_DelayMicro(500);
+        E4235_Write(9,0);
+        count--;
+      }
+       binaryMode('@');
+       count = 500;
+       while(count>0){
+        E4235_DelayMicro(500);
+        E4235_Write(9,1);
+        E4235_DelayMicro(500);
+        E4235_Write(9,0);
+        count--;
+      } 
+      } else {
+        asciiMode(prev);
+           int count = 2000;
+      while(count>0){
+        E4235_DelayMicro(500);
+        E4235_Write(9,1);
+        E4235_DelayMicro(500);
+        E4235_Write(9,0);
+        count--;
+      }
+      asciiMode('@');
+       count = 500;
+         while(count>0){
+        E4235_DelayMicro(500);
+        E4235_Write(9,1);
+        E4235_DelayMicro(500);
+        E4235_Write(9,0);
+        count--;
+      }
+    }
+     
+      
+      
+    }else if(key == '#'){
       swapMode++;
       E4235_DelayMicro(500000);// 
       if(swapMode % 2 == 0){
@@ -153,15 +206,19 @@ int main(){
       }
     } else if (key == '*'){
       swapMode = 0;
+      pressed=0;
       key = '@';
     } else if(swapMode % 2 == 0){ //aka default 
+      
       binaryMode(key);
-    } else {
+      key = '\0';
+    } else if(swapMode % 2 ==1 ){
       asciiMode(key);
+      key = '\0';
     }
-  //E4235_DelayMicro(500);
-  //E4235_Write(9,0);
-  printf("cycle");
+  E4235_DelayMicro(50);
+  E4235_Write(9,0);
+  //printf("cycle");
   }
 }
 
