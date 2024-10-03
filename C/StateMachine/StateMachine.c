@@ -19,7 +19,7 @@ const int COLS = 4; // Four columns
 const int rowPins[4] = {20, 17, 19, 23}; // Connect to the row pins of the keypad
 const int colPins[4] = {24, 25, 26, 27};  // Connect to the column pins of the keypad
 const int pins[4] = {RPI_GPIO_P1_18, RPI_GPIO_P1_22,   RPI_V2_GPIO_P1_37, RPI_V2_GPIO_P1_13};
-const int outputPins[8] = {10, 11, 12, 13, 14, 15, 16, 17};
+const int outputPins[8] = {10, 4, 12, 18, 7, 15, 16, 17};
 
 
 
@@ -58,16 +58,16 @@ void asciiMode(char key){
  if(key == '\0'){
    key = '@';
  }
- int GPIO = 10;
+ int GPIO = 0;
  int ascii = key;
-  while(GPIO<17){
+  while(GPIO<8){
     if(ascii>0){
     int output = ascii % 2;
     printf("%d",output);
-    E4235_Write(GPIO, output); //outputs high or low depending on first bit
+    E4235_Write(outputPins[GPIO], output); //outputs high or low depending on first bit
     ascii = ascii>>1;
     } else{
-      E4235_Write(GPIO,0);
+      E4235_Write(outputPins[GPIO],0);
       printf("0");
     }
     GPIO ++;
@@ -77,7 +77,7 @@ void asciiMode(char key){
 
 void binaryMode(char key){
 //printf("(Key recieved: %c )", key);
-int GPIO = 10;
+int GPIO = 0;
 int binary = key -'0';// char conversion to int
   if(key == 'A'){
     binary = 10;
@@ -90,14 +90,14 @@ int binary = key -'0';// char conversion to int
   } else if (key== '\0'){
     binary = 40;
   }
-    while(GPIO<17){
+    while(GPIO<8){
       if(binary>0){
         int output = binary % 2; //gives lsb to output
         printf("%d",output);
-        E4235_Write(GPIO, output); //outputs high or low depending on first bit
+        E4235_Write(outputPins[GPIO], output); //outputs high or low depending on first bit
         binary = binary>>1; //right shift to
       } else {
-        E4235_Write(GPIO,0);
+        E4235_Write(outputPins[GPIO],0);
         printf("0");
       }
       GPIO ++;
@@ -116,21 +116,24 @@ int main(){
   for(int i = 0; i < ROWS; i++) {
   E4235_Select(rowPins[i], 1); //setting rows to be outputs
   E4235_Write(rowPins[i], 1);
+  E4235_Select(colPins[i], 1);
+  E4235_Write(colPins[i], 0);
   E4235_Select(colPins[i], 0);
   }
-  
+  E4235_Select(9, 1);
   for(int i = 0; i<8; i++){
+    E4235_Select(outputPins[i], 1);
      E4235_Write(outputPins[i], 0);
   }
   
-  int swapMode = 1;
+  int swapMode = 0;
   
   
   
   
   
   while(1){
-    E4235_DelayMicro(5000);// will give 1khz clock
+    E4235_DelayMicro(500);// will give 1khz clock
     //output gpio 9 high
     E4235_Write(9,1);
     //Get the key pressed we can use the GPIO 9 to replace the msb output for a clock to our analyzer if needed.
@@ -139,7 +142,7 @@ int main(){
     //printf(":%c", key);
     if(key == '#'){
       swapMode++;
-      E4235_DelayMicro(100);// 
+      E4235_DelayMicro(500000);// 
       if(swapMode % 2 == 0){
         printf("Binary Mode On, %d", swapMode);
       } else {
@@ -153,7 +156,7 @@ int main(){
     } else {
       asciiMode(key);
     }
-  E4235_DelayMicro(5000);
+  E4235_DelayMicro(500);
   E4235_Write(9,0);
   printf("cycle");
   }
