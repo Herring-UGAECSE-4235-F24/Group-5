@@ -64,6 +64,7 @@ char keypadRead() {
 return 0;
 }
 
+//Function for ascii decode
 void asciiMode(char key){
  if(key == '\0'){
    key = '@';
@@ -85,10 +86,12 @@ void asciiMode(char key){
     
 }
 
+//Function for binary mode
 void binaryMode(char key){
 //printf("(Key recieved: %c )", key);
 int GPIO = 0;
 int binary = key -'0';// char conversion to int
+//logic to check for chars the above transform doesn't work on them
   if(key == 'A'){
     binary = 10;
   } else if(key == 'B'){
@@ -102,6 +105,9 @@ int binary = key -'0';// char conversion to int
   }else if (key== '@'){
     binary = 64;
   }
+
+  //loops through the outputs
+  //uses bit shifting to output the lsb bit
     while(GPIO<8){
       if(binary>0){
         int output = binary % 2; //gives lsb to output
@@ -120,12 +126,12 @@ int binary = key -'0';// char conversion to int
 
 //to get correct ascii number we can just convert char to int to retrieve ascii value
 int main(){
- // Define the row and column pins as ouputs and inputs
- // Define the row and column pin connections
+ //Init
    if (!bcm2835_init()){
         return 1;
     }
 
+//setting known states for pins
   for(int i = 0; i < ROWS; i++) {
   E4235_Select(rowPins[i], 1); //setting rows to be outputs
   E4235_Write(rowPins[i], 1);
@@ -133,12 +139,13 @@ int main(){
   E4235_Write(colPins[i], 0);
   E4235_Select(colPins[i], 0);
   }
+  //Setting pins to output mode
   E4235_Select(9, 1);
   for(int i = 0; i<8; i++){
     E4235_Select(outputPins[i], 1);
      E4235_Write(outputPins[i], 0);
   }
-
+  // variable used to swap between modes
   int swapMode = 0;
   
   
@@ -157,6 +164,7 @@ int main(){
       if(swapMode % 2 == 0){
         binaryMode(prev);
            int count = 2000;
+      //keeps clock while looping values
       while(count>0){
         E4235_DelayMicro(500);
         E4235_Write(9,1);
@@ -166,6 +174,7 @@ int main(){
       }
        binaryMode('@');
        count = 500;
+       //keeps clock while looping values
        while(count>0){
         E4235_DelayMicro(500);
         E4235_Write(9,1);
@@ -176,6 +185,7 @@ int main(){
       } else {
         asciiMode(prev);
            int count = 2000;
+      //keeps clock while looping values
       while(count>0){
         E4235_DelayMicro(500);
         E4235_Write(9,1);
@@ -185,7 +195,8 @@ int main(){
       }
       asciiMode('@');
        count = 500;
-         while(count>0){
+       //keeps clock while looping values
+        while(count>0){
         E4235_DelayMicro(500);
         E4235_Write(9,1);
         E4235_DelayMicro(500);
@@ -195,7 +206,7 @@ int main(){
     }
      
       
-      
+    //Mod operator to swap between modes
     }else if(key == '#'){
       swapMode++;
       E4235_DelayMicro(500000);// 
@@ -204,6 +215,7 @@ int main(){
       } else {
         printf("ASCII Mode On, %d", swapMode);
       }
+    //'*' char code resets to def
     } else if (key == '*'){
       swapMode = 0;
       pressed=0;
