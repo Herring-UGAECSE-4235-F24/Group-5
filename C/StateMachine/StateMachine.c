@@ -8,11 +8,13 @@
 
 
 
-//gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s -lbcm2835 -Wall
+//gcc StateMachine.c -o StateMachine E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s E4235_PWM_SET.s E4235_PWM_Enable.s -lbcm2835 -Wall
 extern int E4235_Write(int GPIO, int state);
 extern int E4235_Select(int GPIO, int state);
 extern int E4235_Read(int GPIO);
 extern void E4235_DelayMicro(int count);
+extern int E4235_PWM_SET ( int GPIO, int FREQ, int DUTY );
+extern void E4235_PWM_Enable (int GPIO, int enable);
 // Define the row and column pins
 const int ROWS = 4; // Four rows
 const int COLS = 4; // Four columns
@@ -125,7 +127,8 @@ int main(){
     E4235_Select(outputPins[i], 1);
      E4235_Write(outputPins[i], 0);
   }
-  
+  E4235_PWM_SET(13,1000,50);
+  E4235_PWM_Enable(13, 1);
   int swapMode = 0;
   
   
@@ -133,9 +136,9 @@ int main(){
   
   
   while(1){
-    E4235_DelayMicro(500);// will give 1khz clock
+    //E4235_DelayMicro(500);// will give 1khz clock
     //output gpio 9 high
-    E4235_Write(9,1);
+   // E4235_Write(9,1);
     //Get the key pressed we can use the GPIO 9 to replace the msb output for a clock to our analyzer if needed.
     
     char key =  keypadRead(); //this will convert the char into ascii
@@ -156,8 +159,8 @@ int main(){
     } else {
       asciiMode(key);
     }
-  E4235_DelayMicro(500);
-  E4235_Write(9,0);
+  //E4235_DelayMicro(500);
+  //E4235_Write(9,0);
   printf("cycle");
   }
 }
