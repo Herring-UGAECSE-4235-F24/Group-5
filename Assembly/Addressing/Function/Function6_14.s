@@ -26,3 +26,23 @@ main:	 adr	r2, lookup		@ point to lookup
 
 lookup: .byte	3, 6, 11, 18, 27, 38, 51, 66, 83, 102
 
+
+
+/*
+ldr r0, =format
+ldr r1, =char
+mov r2, #0
+strb r2, [r1]
+bl scanf
+ldr r1, =char                   @loads address of returned char back into r1
+ldrb r1, [r1]
+
+LDR R0, =string         @ seed printf
+LDR R1, =minutes 
+LDR R2, =seconds                @ loads mins into R1 for print
+LDR R3, =hundredths
+LDR R1, [R1]            @ seed printf
+LDR R2, [R2]            @ seed printf
+LDR R3, [R3]            @ seed printf
+BL printf
+ */
