@@ -19,8 +19,11 @@
 
 	.text
 	.global main
-main:	 adr	r2, lookup		@ point to lookup 
-	 ldrb	r10, [r2, r9]	@ r10 = entry of lookup table index by r9
+
+main:	 
+	adr	r2, lookup		@ point to lookup
+	mov 	r9, #3 
+	ldrb	r10, [r2, r9]	@ r10 = entry of lookup table index by r9
 	mov	r7,#1
 	svc	0
 
