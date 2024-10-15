@@ -38,7 +38,9 @@ main:
 	mov r2, #4
 	udiv r1,r4,r2
 
-	mov r1, #1
+	ldr r0, =format
+	bl printf	
+
 	adr r2, Sine
 	adr r3, Cosine
 
