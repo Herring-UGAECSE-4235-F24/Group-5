@@ -30,58 +30,61 @@ main:
 	mov r2, #0
 	str r2, [r1]
 	bl scanf
-	ldr r1, =value                   @loads address of returned char back into r1
-	ldr r4, [r1]
+	ldr r1, =value                   @loads address of returned int back into r1
+	ldr r4, [r1]			 @loads value into r4	
 	
+	mov r1, #0
+	cmp r4, r1			 @checks if value is zero	
+	beq	Zero
 
-
-	mov r2, #4
-	udiv r1,r4,r2
-
-	ldr r0, =format
-	bl printf	
-
-	adr r2, Sine
+	adr r2, Sine			 @stores addres of sine and cosine LuT
 	adr r3, Cosine
 
-	ldr r9, [r2, r1]		@sin
-	ldr r10, [r3, r1]		@cos
+	ldr r9, [r2, r4]		 @value of sine LuT value is loaded in r9
+	ldr r10, [r3, r4]		 @val of cosine LuT value is loaded in r10
 	
 
 
-	ldr r0, =seedC        		@Cosine seed
+	ldr r0, =seedC        		 @Cosine seed
 
-	mov r1, r4			@load input into r1 //
+	mov r1, r4			 @load input into r1 //
 
-	mov r2, r10			@load value into r2 //
+	mov r2, r10			 @load value into r2 //
 
 	bl printf
 
-	ldr r0, =seedS			@Sine seed
+	ldr r0, =seedS			 @Sine seed
 	
-	mov r1, r4			@load input into r1//
+	mov r1, r4			 @load input into r1//
 
-	mov r2, r9			@laod value into r2//
+	mov r2, r9			 @laod value into r2//
 
         bl printf   	
 
 	
 	mov r7, #1
 	svc 	0
+Zero:
+	ldr r0, =zeroPrompt         @ seed printf 
+        bl printf
+	mov r7, #1
+        svc     0
+	
 
 Cosine: .word	1000, 998, 990, 978, 961, 940, 914, 883, 848, 809, 766, 791, 669, 616, 560, 500, 438, 375, 309, 242, 174, 105, 35
-Sine: .word	0, 69, 139, 208, 276, 342, 407, 470, 370, 588, 643, 695, 743, 788, 829, 866, 899, 927, 951, 970, 985, 995, 999
+Sine: .word	0, 69, 139, 208, 276, 342, 407, 470, 530, 588, 643, 695, 743, 788, 829, 866, 899, 927, 951, 970, 985, 995, 999
 
 .data
 	prompt: 	.asciz "Enter angle: \n"
 
+	zeroPrompt: 	.asciz "Cosine of 0 = 1.000 and Sine of 0 = 0\n"
 	format: 	.asciz "%d"
 
 	value:		.word 0 
 
-	seedC: 		.asciz  "Cosine of %d  =  0.%d and "
+	seedC: 		.asciz  "Cosine of %d  =  0.%03d and "
 
-	seedS: 		.asciz	"Sine of %d  = 0.%d\n"
+	seedS: 		.asciz	"Sine of %d  = 0.%03d\n"
 
 	//lookup: .byte	0, 4, 8, 12, 16, 20, 24, 28, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88
 
