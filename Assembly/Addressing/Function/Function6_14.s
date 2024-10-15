@@ -20,16 +20,65 @@
 	.text
 	.global main
 
-main:	 
-	adr	r2, lookup		@ point to lookup
-	mov 	r9, #3 
-	ldrb	r10, [r2, r9]	@ r10 = entry of lookup table index by r9
-	mov	r7,#1
-	svc	0
+main:
+	ldr R0, =prompt         @ seed printf 
+	bl printf
 
-lookup: .byte	3, 6, 11, 18, 27, 38, 51, 66, 83, 102
+	ldr r0, =format
+	ldr r1, =value
+	mov r2, #0
+	strb r2, [r1]
+	bl scanf
+	ldr r1, =value                   @loads address of returned char back into r1
+	ldr r4, [r1]
+	
 
 
+	mov r2, #4
+	udiv r1,r4,r2
+	ldr r2, =lookupS
+	ldr r3, =lookupC
+
+	ldr r9, [r2, r1]
+	ldr r10, [r3, r1]
+
+	ldr r0, =seedC        		@Cosine seed
+
+	ldr r1, r4			@load input into r1
+
+	ldr r2, r10			@load value into r2
+
+	bl printf
+
+	ldr r0, =seedS			@Sine seed
+	
+	ldr r1, r4			@load input into r1
+
+        ldr r2, r10			@laod value into r2
+
+        bl printf   	
+
+	
+	mov r7, #1
+	svc 	0
+
+
+.data
+	prompt: 	.asciz "Enter angle: \n"
+
+	format: 	.asciz "%d"
+
+	value:		.word 0 
+
+	seedC: 		.asciz  "Cosine of 0.%02d  =  0.%03d and"
+
+	seedS: 		.asciz	"Sine of %03d  = 0.%03d\n"
+
+	//lookup: .byte	0, 4, 8, 12, 16, 20, 24, 28, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88
+
+	lookupS: .word	000, 069, 139, 208, 276, 342, 407, 470, 370, 588, 643, 695, 743, 788, 829, 866, 899, 927, 951, 970, 985, 995, 999
+
+	lookupC: .word	1000, 998, 990, 978, 961, 940, 914, 883, 848, 809, 766, 791, 669, 616, 560, 500, 438, 375, 309, 242, 174, 105, 035
 
 /*
 ldr r0, =format
