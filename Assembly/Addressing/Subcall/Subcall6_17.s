@@ -19,14 +19,7 @@ main:
 	svc	0
 	
 myFunc:
-	@ save r0, r1, and r2 on stack before they are used 
-	sub  	r13, r13, #4 @ r13 = r13 - 4, to decrement the stack pointer
-	str  	r0, [r13]	 @ save r0 on stack
-	sub  	r13, r13, #4 @ r13 = r13 - 4, to decrement the stack pointer
-	str  	r1, [r13]	 @ save r1 on stack
-	sub  	r13, r13, #4 @ r13 = r13 - 4, to decrement the stack pointer
-	str  	r2, [r13]	 @ save r2 on stack
-
+	PUSH {R0-R2}
 	@ -------- modify r0, r1, and r2 
 	mov  	r0, #0	@ r0 = 0
 	mov  	r1, #0	@ r1 = 0
@@ -34,11 +27,6 @@ myFunc:
 	@ --------
 
 	@ restore the original registers contents from stack
-	ldr	r2, [r13]	 @ restore r2 from stack
-	add	r13, r13, #4 @ r13 = r13 + 4 to increment the stack pointer
-	ldr	r1, [r13]	 @ restore r1 from stack
-	add	r13, r13, #4 @ r13 = r13 + 4 to increment the stack pointer
-	ldr	r0, [r13]	 @ restore r0 from stack
-	add	r13, r13, #4 @ r13 = r13 + 4 to increment the stack pointer
+	POP {R0-R2}
 
 	bx	lr		 @ return to caller

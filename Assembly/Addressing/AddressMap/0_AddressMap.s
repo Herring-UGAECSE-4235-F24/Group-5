@@ -9,12 +9,12 @@
 
 
 	.text
-	.global _start
-_start:
+	.global main
+main:
 	ldr	r2, =our_fixed_data	@ point to our_fixed_data
-	@ load r0 with the contents of memory pointed to by r2
+					@ load r0 with the contents of memory pointed to by r2
 	ldrb	r0, [r2]
-	@ terminate the program
+					@ terminate the program
 	mov	r7, #1
 	svc	0
 
