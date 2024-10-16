@@ -37,6 +37,12 @@ main:
 	cmp r4, r1			 @checks if value is zero	
 	beq	Zero
 
+	mov r1, #3			 @mask to check if valid input since 11 is three it check last bit
+	and r1,r4,r1			 @any number divisble by 4 should now be 0
+	cmp r1, #0
+	bne End
+
+
 	adr r2, Sine			 @stores addres of sine and cosine LuT
 	adr r3, Cosine
 
@@ -70,6 +76,10 @@ Zero:
 	mov r7, #1
         svc     0
 	
+End:
+	mov r7, #1
+        svc     0
+
 
 Cosine: .word	1000, 998, 990, 978, 961, 940, 914, 883, 848, 809, 766, 791, 669, 616, 560, 500, 438, 375, 309, 242, 174, 105, 35
 Sine: .word	0, 69, 139, 208, 276, 342, 407, 470, 530, 588, 643, 695, 743, 788, 829, 866, 899, 927, 951, 970, 985, 995, 999
