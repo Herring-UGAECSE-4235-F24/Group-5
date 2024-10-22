@@ -25,7 +25,7 @@
 
 // READ = 0;
 // WRITE = 1;
-int length = 7; //Number of bytes to be transmitted or received.
+int length = 8; //Number of bytes to be transmitted or received.
 char buf[32];
 char wbuf[32];
 uint8_t slave_address = 0x68;
@@ -65,6 +65,7 @@ int main(){
      
      
       getTime();
+      wbuf[0] = 00; //Word address to start
       wbuf[1] = seconds;
       wbuf[2] = minutes;
       wbuf[3] = hours;
@@ -81,7 +82,7 @@ int main(){
     
       
       
-
+      
         if(!bcm2835_init()){
                 return 1;
         }
@@ -101,7 +102,7 @@ int main(){
        
 //===================== Read ===========================\\  
     
-       // bcm2835_i2c_setSlaveAddress(slave_address);
+        //bcm2835_i2c_setSlaveAddress(slave_address);
        // bcm2835_i2c_set_baudrate(100000);
         
         if(!bcm2835_i2c_begin()){
@@ -109,10 +110,10 @@ int main(){
         }
         
         for(int i = 0; i<32; i++) buf[i] = 'n';
-        data = bcm2835_i2c_read(buf,length);
+        data = bcm2835_i2c_read(buf,32);
         printf("Read Result = %d\n", data);
         for(int i = 0; i<32; i++) {
-                if(buf[i] != 'n') printf("Read Buf[%d] = %x\n", i, buf[i]);
+                if(buf[i] != 'n') printf("Read Buf[%d] = %d\n", i, buf[i]);
         }
         bcm2835_i2c_end();
        
