@@ -28,25 +28,27 @@
 int length = 20; //Number of bytes to be transmitted or received.
 char buf[32];
 char wbuf[32];
-uint8_t slave_address = 0x68;
-uint8_t mode = 0;
+uint8_t slave_address = 0x68; //Address of slave address
+uint8_t mode = 0; 
 uint8_t data;
 
 char days[100], months[100];
 int date, hours, minutes, seconds, year;
-struct tm *timeData;
+struct tm *timeData; //Time struct to handle time
 
 int values[7];
-int splitInt(int num){
+
+//Split int function is how I split the integers to be sent to the rtc
+int splitInt(int num){ 
   int tens = num/10;
-  int output = tens<<4;
+  int output = tens<<4; //top 4 bits
   int ones = num % 10;
-  output = output | ones;
+  output = output | ones; //sets the bits accurately
   return output;
   
 }
 
-
+//Converts days of the week to numbers
 int dayNum(const char * day){
   char num[100];
   strcpy(num, day);
@@ -57,6 +59,8 @@ int dayNum(const char * day){
   
 }
 
+
+//Converts months to numbers
 int monthNum(const char * month){
   char num[100];
   strcpy(num, month);
@@ -67,6 +71,8 @@ int monthNum(const char * month){
   
 }
 
+
+//get time method that gets time
 void getTime(){
     time_t rawTime;
 
@@ -76,9 +82,9 @@ void getTime(){
     // Convert to local time
     timeData = localtime(&rawTime);
 
-    // Store each component in separate variables
     
-    // Fill the substrings/variables with the appropriate values
+    
+    // Fill the variables with the appropriate values
     strftime(days, sizeof(days), "%A", timeData);    // Day 
     strftime(months, sizeof(months), "%B", timeData);// Month 
     date = timeData->tm_mday;                      // Date 
@@ -92,6 +98,7 @@ void getTime(){
 
 }
 
+//main functions
 int main(){
      if(!bcm2835_init()){
                 return 1;
@@ -103,6 +110,7 @@ int main(){
       int day = dayNum(days);
       int month = monthNum(months);
   
+  //After getting time assign statements  
       wbuf[0] = 00; //Word address to start
       wbuf[1] = splitInt(seconds);
       wbuf[2] = splitInt(minutes);
@@ -159,6 +167,8 @@ int main(){
         for(int i = 1; i<length; i++) buf[i] = 'n';
         data = bcm2835_i2c_read(buf,length);
         printf("Read Result = %d\n", data);
+        
+        //Decode essentially the opposite of split int function
         for(int i = 1; i<length; i++) {
                 if(buf[i] != 'n') {
                   int upper = buf[i] & 0xF0;

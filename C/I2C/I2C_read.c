@@ -65,8 +65,8 @@ int main(){
                   
                 }
         }
-       printf("Date in MM/DD/YY is: %d/%d/%d\n", values[5],values[4], values[6]);
-        printf("Current Time in HH:MM:SS is: %d:%d:%d\n",values[2], values[1], values[19]);
+       printf("Date in MM/DD/YY is: %02d/%02d/%02d\n", values[5],values[4], values[6]);
+        printf("Current Time in HH:MM:SS is: %02d:%02d:%02d\n",values[2], values[1], values[19]);
        bcm2835_i2c_end();
 //
 
