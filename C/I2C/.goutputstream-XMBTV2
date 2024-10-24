@@ -1,0 +1,70 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include "bcm2835.h"
+#include <unistd.h>
+#include <time.h>
+#include <string.h>
+#include <ctype.h>
+
+
+//gcc -o I2C I2C.c -lbcm2835 -Wall for compile
+
+
+
+/* Useful Addresses
+ * Address 00, Seconds (00-59)
+ * Address 01, Minutes (0-59)
+ * Address 02, Hours (1-12)
+ * Address 03, Day (1-7)
+ * Address 04, Date (01-31)
+ * Address 05, Month (01-12)
+ * Address 06, Year (00-99)
+ * 
+ * Address 0F, bit 3 to enable 32khz 
+ */
+
+// READ = 0;
+// WRITE = 1;
+int length = 7; //Number of bytes to be transmitted or received.
+char buf[7];
+
+uint8_t slave_address = 0x68;
+uint8_t mode = 0;
+
+
+int main(){
+        
+        struct tm* ptr;
+        time_t t;
+        t = time(NULL);
+        ptr = localtime(&t);
+        
+        printf("%s", asctime(ptr));
+        
+        char timeString[] = asctime(ptr);
+        char test[] = strcpy(test, asctime(ptr));
+        
+        int stringLength = strlen(timeString);
+        int count =0;
+        while(count < stringLength) {
+                int ws = isspace(stringLength);
+                return ws;
+        }
+
+        
+        if(!bcm2835_init()){
+                return 1;
+        }
+        bcm2835_i2c_begin();
+        bcm2835_i2c_setSlaveAddress(slave_address);
+        bcm2835_i2c_set_baudrate(100000);
+
+  
+        
+        bcm2835_i2c_write(buf,length);
+        bcm2835_i2c_end();
+        
+        
+        
+}
+        
