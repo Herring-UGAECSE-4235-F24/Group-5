@@ -63,7 +63,7 @@ read:
 	ldr r8, [r5, #0x34] @shift base address by value of LEV0 offset
 	lsr r8, r8, PIN @shift r8 by PIN value to get pin val to read on the LSB
 	and r0, r8, #1 @store the LSB (pin to be checked) as the LSB and clear all other bits this val will be returned
-	mov r2,r0 @ saving r0 in r2
+	mov r10,r0 @ saving r0 in r2
 
  
  	mov r0,r5
@@ -73,7 +73,7 @@ read:
 	mov r0,r4
 	bl close
  
- 	mov r0,r2	@restoring value in r0
+ 	mov r0,r10	@restoring value in r0
   
 	POP {r2-r12,LR}
 	bx lr @ return to C main
