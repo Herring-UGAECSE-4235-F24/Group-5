@@ -1,6 +1,6 @@
 OBJS = stopwatchinput.o
 ifdef DEBUG
-DEBUGFLGS = -g
+DEBUGFLGS = -g -mfpu=vfpv3
 else
 DEBUGFLGS =
 endif
