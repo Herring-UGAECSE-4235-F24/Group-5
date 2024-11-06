@@ -1,4 +1,4 @@
-
+@ compiled using gcc exponential.s -o exponential -mfpu=vfpv3
     ldr r0, =format
     ldr r1, =char
     Bl scanf				@keyblock on so it waits for input to start

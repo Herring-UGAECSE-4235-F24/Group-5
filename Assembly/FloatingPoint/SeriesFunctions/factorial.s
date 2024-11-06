@@ -1,4 +1,4 @@
-
+@ compiled using=> gcc exponential.s -o exponential -mfpu=vfpv3
 
 
 ldr r0, =format

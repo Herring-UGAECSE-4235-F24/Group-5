@@ -7,7 +7,7 @@
 @Second, add a keyboard input for the x value to load into s0 with result to monitor.  We will check this in class.
 @We will check code on Github.  
 
-
+@ compiled using =>gcc SinTaylorSeries.s -o SinTaylorSeries -mfpu=vfpv3
 	.global main
     .func main
 
