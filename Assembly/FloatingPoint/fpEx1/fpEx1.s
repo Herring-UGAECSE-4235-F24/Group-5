@@ -5,10 +5,11 @@
 @ We will check in class.  Be ready to change the radius value and re-run
 
 @compile => gcc fpEx1.s -o fpEx1 -mfpu=vfpv3
-
 	.text
 	.global main
+		
 main:
+	push {lr}
 	vmov.f32	s0, #0.125
 	vmul.f32 	s0, s0, s0		@r^2
 	ldr	r2,=piNumber
@@ -26,7 +27,7 @@ exit:
 
 .data
 string:
-    .asciz "The area of your circle is:  %f"
+    .asciz "The area of your circle is:  %f units squared \n"
 
 piNumber:
 	.float 3.141593
