@@ -4,10 +4,11 @@
 @ Change the code to print the results to the monitor in correct format.
 @ We will check in class.  Be ready to change the radius value and re-run
 
+@compile => gcc fpEx1.s -o fpEx1 -mfpu=vfpv3
 
 	.text
-	.global _start
-_start:
+	.global main
+main:
 	vmov.f32	s0, #0.125
 	vmul.f32 	s0, s0, s0		@r^2
 	ldr	r2,=piNumber
