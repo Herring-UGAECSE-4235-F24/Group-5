@@ -1,7 +1,9 @@
-@ compiled using=> gcc exponential.s -o exponential -mfpu=vfpv3
+
+@ compiled using=> gcc factorial.s -o fac -mfpu=vfpv3
 @ tried using sterlings approximation to calc n! using n^n not enough time for that :()
 
 .text
+.align
 	.global main
 		
 main:
@@ -22,13 +24,14 @@ main:
 
 	vmov.f32 s1, #1.0		@result val
 	vmov.f32 s2, #1.0		@temp for next iteration
-
+	vmov.f32 s3, #1.0
 facloop:
-	vmul.f32 s1, s1, s0		@if s0 = 5 s1 = 5,
+	vmul.f32 s1, s1, s0		@if s0 = 5 s1 = 5
 	vcmp.f32 s0, s2		@if s0 = 1 exit
 	beq exit
 
-	vsub.f32 s0, s0, #1.0	@s2 = s0 - 1 aka one less
+	vsub.f32 s0, s0, s3	@s2 = s0 - 1 aka one less
+	
 	b facloop
 
 exit:
@@ -48,12 +51,13 @@ exit:
 int:
 		.word  0
 stringin:
-       	.asciz "n!: n = "
+       		.asciz "n!: n = "
 stringout:
 		.asciz "! = %f"
 format:
-		.asciz " %d"			 	@for reading int	
+		.asciz "%d"			 	@for reading int	
 intformat:
-e:	
-		.word 2.718281
+		.asciz "%d"
+ec:	
+		.float 2.718281
 

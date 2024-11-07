@@ -44,7 +44,7 @@ main:
 loopn:
 	subs r0,r0, #1		@if r0(n) = 1 s0 =s0
 	beq exit
-	vmul s0, s0, s0
+	vmul.f32 s0, s0, s0
 	b loopn
 
 exit:
