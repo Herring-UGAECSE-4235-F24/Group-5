@@ -1,88 +1,85 @@
-@ compiled using gcc exponential.s -o exponential -mfpu=vfpv3
-    .text
+	@ compiled using gcc exponential.s -o exponential -mfpu=vfpv3
+	.text
 	.global main
-		
-main:
 
+
+	
+main:
 	push {lr}
-	ldr r0, =prompt
+
+	ldr r0, =promptx		@seed printf with prompt for x
 	bl printf
 
+	ldr r0, =float		@reads user input for base
+	ldr r1, =x
+	bl scanf
 
-
-	ldr r0, =float			@seed scanf
-	ldr r1, =x			
+	ldr r0, =promptn		@seed printf with prompt for n
+	bl printf
+	
+	ldr r0, =int	@reads n for exponent
+	ldr r1, =n
 	bl scanf
 	
-	ldr r0, =x			@grabs input
+	ldr r0, =x		@converting x to double and printing
 	vldr s0, [r0]
-
-	ldr r0, =stringn	@prompts for n
+	vcvt.f64.f32 d0, s0	
+	vmov r1, r2, d0
+	ldr r0, =float
 	bl printf
 
-	ldr r0, =formatint
-	ldr r1, =n				@stores n
-
+	ldr r0, =n	@printing n
+	ldr r1, [r0]
+	ldr r0, =carrot
+	bl printf
 
 	
+	ldr r0, =x	@storing x and n into their respective registers
+	vldr s0, [r0]
 
-	ldr r0, =formatf
-	vcvt.f64.f32 d0, s0		@ fp to double conversion
-	vmov r1, r2, d0
-	bl printf				@prints x
+	ldr r1, =n
+	ldr r0, [r1]
+	
+	
+	cmp r0, #0			@checking for zero exponent
+	beq zero		@if so, print 1
 
-	ldr r0, =carrot			@prints ^
-	bl printf
+	vmov.f32 s1, s0
 
-	ldr r0, =formatint
-	ldr r1, =n	
-	ldr r1, [r1]			@prints n
-
-
-
-
-	ldr r0, =n				@r0 holds n
-	ldr r0, [r0]
 loopn:
 	subs r0,r0, #1		@if r0(n) = 1 s0 =s0
 	beq exit
-	vmul.f32 s0, s0, s0
+	vmul.f32 s1, s1, s0
 	b loopn
-
+	
+zero:
+	vmov.f32 s1, #1
 exit:
-	@prints
 
-
-	ldr r0, output
-	vcvt.f64.f32 d0, s0		@ fp to double conversion
-	vmov r1, r2, d0			@ prints = result
+	vcvt.f64.f32 d0, s1	@convert to double and print
+	ldr r0, =equal
+	vmov r1, r2, d0
 	bl printf
 
+    pop {pc}
+    mov pc, lr
+		
 .data
-x:
-	.word 0						@storing input
-string:
-             .asciz "Sin(x) = %f\n"       			@output string
-float:
-	.asciz "%f"					@format string floats
-prompt:
-                .asciz "Sin(x):   x = "			@entry prompt
+x:	
+	.word 0								@storing x
+n: 
+	.word 0							@storing n
+promptx:
+	 .asciz "x^n => please enter x: "	@startup message
+promptn:
+	 .asciz "please enter n: "					@enter n message
+carrot: 
+	.asciz "^%d"							
+int: 
+	.asciz "%d"						@reading in an int
+float: 
+	 .asciz "%f"							@reading in a float
+equal:
+	 .asciz " => %f\n"					@printing in pieces to avoid using stack
 
-
-output:
-		.asciz " = %f"
-stringx:
-       	.asciz "x^n: x = "
-stringn:	
-		.asciz "n = "
-float:
-		.asciz "%f"			 	@for reading float	
-formatint:
-		.asciz "%d"				@for reading int
-carrot:
-		.asciz "^"
-x:
-		.word 0						@float to be mul
-n:		
-		.word 0						@loop tracker
 
