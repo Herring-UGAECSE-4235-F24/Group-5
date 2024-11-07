@@ -15,12 +15,12 @@ exponentialC:
     beq end                     @ corner case handling for 1
 
 loopn:
-    subs r2, r2, #1             @ Decrement 
+    subs r2, r2, #1             @ Decrement by 1
     vmul.f32 s0, s0, s1         @ same as other code logic
     cmp r2, #1                  
     bne loopn                   
 
-    b end                       @ Exit the loop
+    b end                       @ Exit the loop 
 
 zero:
     vmov.f32 s0, #1.0           

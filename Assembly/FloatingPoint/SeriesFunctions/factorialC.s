@@ -14,7 +14,7 @@ factorialC:
 
 facloop:
     vmul.f32 s1, s1, s0        @ same logic from mi other code
-    vsub.f32 s0, s0, s3        @ Decrement 
+    vsub.f32 s0, s0, s3        @ Decrement by 1
     vcmp.f32 s0, s2            @ Compare 
     vmrs apsr_nzcv, fpscr
     bne facloop                @ loop until 1

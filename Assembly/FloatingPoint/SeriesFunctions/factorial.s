@@ -40,7 +40,7 @@ facloop:
 	vmrs apsr_nzcv, fpscr
 	beq exit
 
-	vsub.f32 s0, s0, s3	@s2 = s0 - 1 aka one less
+	vsub.f32 s0, s0, s3	@s2 = s0 - 1 aka one less than before
 	
 	b facloop
 zero:

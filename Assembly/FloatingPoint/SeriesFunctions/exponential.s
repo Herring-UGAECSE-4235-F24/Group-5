@@ -66,7 +66,7 @@ exit:
 		
 .data
 x:	
-	.word 0								@storing x
+	.word 0								@storing x from scan
 n: 
 	.word 0							@storing n
 promptx:
