@@ -1,20 +1,59 @@
 @ compiled using=> gcc exponential.s -o exponential -mfpu=vfpv3
+@ tried using sterlings approximation to calc n! using n^n not enough time for that :()
+
+.text
+	.global main
+		
+main:
+	push {lr}
 
 
-ldr r0, =format
-ldr r1, =char
-Bl scanf				@keyblock on so it waits for input to start
-char:
-		.byte  0
-string:
-       	        .asciz "%02d:%02d:%02d\n"
+	ldr r0, =stringin
+	bl printf
+
+	ldr r0, =format
+	ldr r1, =int
+	Bl scanf				@keyblock on so it waits for input to start
+
+	ldr r1, =int
+	ldr r1, [r1]			@int is in r1
+
+	vldr.f32 s0, [r1]		@s0 = starting point
+
+	vmov.f32 s1, #1.0		@result val
+	vmov.f32 s2, #1.0		@temp for next iteration
+
+facloop:
+	vmul.f32 s1, s1, s0		@if s0 = 5 s1 = 5,
+	vcmp.f32 s0, s2		@if s0 = 1 exit
+	beq exit
+
+	vsub.f32 s0, s0, #1.0	@s2 = s0 - 1 aka one less
+	b facloop
+
+exit:
+
+
+	ldr r0, =intformat
+	ldr r1, =int
+	bl printf
+
+
+	ldr r0, =stringout
+	vcvt.f64.f32 d0, s0		@ fp to double conversion
+	vmov r1, r2, d0
+	bl printf
+
+.data
+int:
+		.word  0
+stringin:
+       	.asciz "n!: n = "
+stringout:
+		.asciz "! = %f"
 format:
-		.asciz " %c"			 	@for reading char	
-hundredths:
-	        .word   0               @ hundreths count storage for printing
-seconds:
-		.word 	0 				@ seconds count storage for print
-minutes:
-		.word	0				@ minutes count for print
-Lap:
-		.word   0
+		.asciz " %d"			 	@for reading int	
+intformat:
+e:	
+		.word 2.718281
+
