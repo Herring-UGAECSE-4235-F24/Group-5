@@ -1,26 +1,30 @@
 
-@ compiled using=> gcc factorial.s -o fac -mfpu=vfpv3
+@ compiled using=> gcc factorial.s -o fac -mfpu=vfpv3 -lc
 @ tried using sterlings approximation to calc n! using n^n not enough time for that :()
 
-.text
-.align
+	.text
 	.global main
 		
 main:
 	push {lr}
 
 
-	ldr r0, =stringin
+	ldr r0, =stringin 		@input string
 	bl printf
 
-	ldr r0, =format
-	ldr r1, =int
-	Bl scanf				@keyblock on so it waits for input to start
 
-	ldr r1, =int
+
+
+	ldr r0, =int
+	ldr r1, =in
+	bl scanf				@keyblock on so it waits for input to start
+
+	ldr r0, =in
+
+	vldr.f32 s0, [r0]		@s0 = starting point
+
 	ldr r1, [r1]			@int is in r1
 
-	vldr.f32 s0, [r1]		@s0 = starting point
 
 	vmov.f32 s1, #1.0		@result val
 	vmov.f32 s2, #1.0		@temp for next iteration
@@ -37,8 +41,8 @@ facloop:
 exit:
 
 
-	ldr r0, =intformat
-	ldr r1, =int
+	ldr r0, =int
+	ldr r1, =in
 	bl printf
 
 
@@ -47,17 +51,12 @@ exit:
 	vmov r1, r2, d0
 	bl printf
 
-.data
-int:
-		.word  0
-stringin:
-       		.asciz "n!: n = "
-stringout:
-		.asciz "! = %f"
-format:
-		.asciz "%d"			 	@for reading int	
-intformat:
-		.asciz "%d"
-ec:	
-		.float 2.718281
+	.data
+
+	in:.word 0                                         @storing input
+        stringin: .asciz "n!: n = "
+	stringout:.asciz "! = %f"
+        int:.asciz "%f"                                     @format string floats
+        prompt:.asciz "Sin(x):   x = "                 @entry prompt
+	ec:.float 2.718281
 
