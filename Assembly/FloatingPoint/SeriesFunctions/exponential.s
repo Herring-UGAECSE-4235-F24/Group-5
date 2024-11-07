@@ -3,16 +3,19 @@
 	.global main
 		
 main:
+
 	push {lr}
+	ldr r0, =prompt
+	bl printf
 
 
 
-	ldr r0, =stringx
-    Bl printf				@prints first part of string
-
-	ldr r0, =formatf
-	ldr r1, =x
-	bl scanf				@reads the float and stores in x
+	ldr r0, =float			@seed scanf
+	ldr r1, =x			
+	bl scanf
+	
+	ldr r0, =x			@grabs input
+	vldr s0, [r0]
 
 	ldr r0, =stringn	@prompts for n
 	bl printf
@@ -21,8 +24,7 @@ main:
 	ldr r1, =n				@stores n
 
 
-	ldr r1, =x
-	vldr s0, [r1]			@s0 holds value of x
+	
 
 	ldr r0, =formatf
 	vcvt.f64.f32 d0, s0		@ fp to double conversion
@@ -56,15 +58,24 @@ exit:
 	vmov r1, r2, d0			@ prints = result
 	bl printf
 
-char:
-		.byte  0
+.data
+x:
+	.word 0						@storing input
+string:
+             .asciz "Sin(x) = %f\n"       			@output string
+float:
+	.asciz "%f"					@format string floats
+prompt:
+                .asciz "Sin(x):   x = "			@entry prompt
+
+
 output:
 		.asciz " = %f"
 stringx:
        	.asciz "x^n: x = "
 stringn:	
 		.asciz "n = "
-formatf:
+float:
 		.asciz "%f"			 	@for reading float	
 formatint:
 		.asciz "%d"				@for reading int

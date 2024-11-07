@@ -7,12 +7,8 @@
 		
 main:
 	push {lr}
-
-
-	ldr r0, =stringin 		@input string
+	ldr r0, =prompt
 	bl printf
-
-
 
 
 	ldr r0, =int
@@ -51,12 +47,18 @@ exit:
 	vmov r1, r2, d0
 	bl printf
 
+	
 	.data
+	
+	x:
+		.word 0						@storing input
+	string:
+                .asciz "Sin(x) = %f\n"       			@output string
+	float:
+		.asciz "%f"					@format string floats
+	prompt:
+                .asciz "Sin(x):   x = "			@entry prompt
 
-	in:.word 0                                         @storing input
-        stringin: .asciz "n!: n = "
-	stringout:.asciz "! = %f"
-        int:.asciz "%f"                                     @format string floats
-        prompt:.asciz "Sin(x):   x = "                 @entry prompt
-	ec:.float 2.718281
+	
+	
 
