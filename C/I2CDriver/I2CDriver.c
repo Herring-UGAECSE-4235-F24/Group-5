@@ -8,27 +8,19 @@
 
 //gcc -o I2CDriver I2CDriver.c -Wall E4235_DelayMicro.s E4235_Select.s E4235_Write.s E4235_Read.s
 
+//Externs for class library calls
 extern int E4235_Write ( int GPIO, int state );
 extern int E4235_Select ( int GPIO, int state );
 extern void E4235_DelayMicro ( int count );
 extern int E4235_Read (int GPIO);
 
-/* Addresses
-* Adress 00, Seconds(00-59)
-* Adress 01, Minutes(0-59)
-* Address 02, Hours(1-12)
-* Address 03, Day (1-7)
-* Address 04, Date (01-31)
-* Address 05, Month (01-12)
-* Address 06, Year (00-99)
-*/
 
 #define SDA 27		//GPIO pin for SDA
 #define SCL 17 		//GPIO17 pin for SCL
 #define DS3231 0x68 //I2C address for DS3231
 
 
-//Starts the comuincation by sending a start signal
+//Starts the commuincation by sending a start signal
 void start(){
 	E4235_Select(SDA, 1); 
 	E4235_Write(SDA, 0);
@@ -39,6 +31,8 @@ void start(){
 	E4235_Select(SDA, 0); 
 	E4235_Select(SCL, 0); 
 }
+
+//Stops the communication by sending a stop fucntion
 void stop(){ 
 	E4235_Select(SDA, 0);
 	E4235_Select(SCL, 0);
@@ -58,59 +52,6 @@ int splitInt(int num){
   return output;
   
 }
-
-//Converts days of the week to numbers
-// int dayNum(const char * day){
-//   char num[100];
-//   strcpy(num, day);
-//   if(strcmp(num, "Tuesday") == 0) return 03;
-//   else if(strcmp(num, "Wednesday") == 0) return 04;
-//   else if(strcmp(num, "Thursday") == 0) return 05;
-//   else return 0;
-  
-// }
-
-
-// //Converts months to numbers
-// int monthNum(const char * month){
-//   char num[100];
-//   strcpy(num, month);
-//   if(strcmp(num, "October") == 0) return 10;
-//   if(strcmp(num, "November") == 0) return 11;
-//   else return 0;
-  
-  
-  
-// }
-
-
-// //get time method that gets time
-// void getTime(){
-//     time_t rawTime;
-
-//     // Get the current time as raw time
-//     time(&rawTime);
-
-//     // Convert to local time
-//     timeData = localtime(&rawTime);
-
-    
-    
-//     // Fill the variables with the appropriate values
-//     strftime(days, sizeof(days), "%A", timeData);    // Day 
-//     strftime(months, sizeof(months), "%B", timeData);// Month 
-//     date = timeData->tm_mday;                      // Date 
-//     hours = timeData->tm_hour;                     // Hours 
-//     minutes = timeData->tm_min;                    // Minutes
-//     seconds = timeData->tm_sec;                    // Seconds 
-//     year = timeData->tm_year + 1900;               // Year since 1900 so add 1900
-    
-    
-  
-
-// }
-
-
 
 
 //function reverse bits in a byte in order to send MSB first
@@ -276,47 +217,3 @@ void I2C_Read(char * rbuf) {
 
 }
 
-// int main() {
-// //============ Handles Time parsing ================
-// 	  getTime();
-//       int day = dayNum(days);
-//       int month = monthNum(months);
-  
-//   //After getting time assign statements  
-//       wbuf[0] = 0x00; //Word address to start
-//       wbuf[1] = splitInt(seconds);
-//       wbuf[2] = splitInt(minutes);
-//       wbuf[3] = splitInt(hours);
-//       wbuf[4] = splitInt(day);
-//       wbuf[5] = splitInt(date);
-//       wbuf[6] = splitInt(month);
-//       wbuf[7] = splitInt(year-2000);
-//       wbuf[8] = 0x00;
-//       wbuf[9] = 0x00;
-//       wbuf[10] = 0x00;
-//       wbuf[11] = 0x00;
-//       wbuf[12] = 0x00;
-//       wbuf[13] = 0x00;
-//       wbuf[14] = 0x00;
-//       wbuf[15] = 0x00;
-//       wbuf[16] = 0x08;                  //Bit three is set high to enable crysta oscillator
-//       wbuf[17] = 0x00;
-//       wbuf[18] = 0x00;
-
-//       printf("Day: %s\n", days);
-//       printf("Month: %s\n", months);
-//       printf("Date: %d\n", date);
-//       printf("Time: %02d:%02d:%02d\n", hours, minutes, seconds);
-//       printf("Year: %d\n", year); 
-
-// //============ I2C Calls ================
-
-// //should write to all addreses in buf
-  
-//  I2C_Write(wbuf);
-
- 
-
-//  I2C_Read(rbuf);
-
-// }
