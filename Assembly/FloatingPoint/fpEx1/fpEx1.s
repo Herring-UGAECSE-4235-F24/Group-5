@@ -16,6 +16,8 @@ main:
 	vldr		s1, [r2]
 	vmul.f32	s0, s0, s1		@area
 	
+
+
 	vcvt.f64.f32 d0, s0		@ fp to double conversion
 	ldr r0, =string
 	vmov r1, r2, d0
